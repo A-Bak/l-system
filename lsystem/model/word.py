@@ -1,44 +1,39 @@
-from typing import List, Set
+from symtable import Symbol
+from typing import List, Union
 
 import lsystem.model.symbol as symbol
 import lsystem.model.alphabet as alphabet
 
 
 class Word():
-    
-    def __init__(self, symbols: List[symbol.Symbo]) -> None:
-        
-        if not all(map(lambda x: isinstance(x, symbol.Symbol), symbols)):
-            raise ValueError('Not a symbol. Word must consist of a List[Symbol].')
-        
-        self.symbols = symbols
-    
-    
-    
+
+    def __init__(self, symbols: Union[str, List[Symbol]]) -> None:
+
+        if isinstance(symbols, str):
+            self.symbols = [symbol.Symbol(x) for x in symbols]
+
+        elif all(map(lambda x: isinstance(x, symbol.Symbol), symbols)):
+            self.symbols = symbols
+
+        else:
+            raise TypeError(
+                'Invalid type. Word must consist of a List[Symbol] or a str')
+
     def in_alphabet(self, alphabet: alphabet.Alphabet) -> bool:
-        
-        for s in self.symbols:
-            if s not in alphabet:
-                return False
-            
-        return True
-    
-    
-    
+        return all(map(lambda x: x in alphabet, self.symbols))
+
     def __repr__(self) -> str:
-        return self.__str__()
-    
-    
-    
+        return f'<{self.__module__}.Word, {hex(id(self))}>'
+
     def __str__(self) -> str:
-        return self.value
-    
-    
-    
+        return ''.join(map(str, self.symbols))
+
     def __eq__(self, __x: object) -> bool:
-        return super().__eq__(__x)
-    
-    
-    
+        if (not isinstance(__x, self.__class__)
+                or not len(__x.symbols) == len(self.symbols)):
+            return False
+
+        return all(map(lambda x: x[0] == x[1], zip(__x.symbols, self.symbols)))
+
     def __hash__(self) -> int:
-        return hash(self.value)
+        return hash(self.__str__())
