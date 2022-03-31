@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import List
 
+import lsystem.model.word as word
 import lsystem.model.rule as rule
 
 
@@ -20,7 +21,7 @@ class Symbol(str):
         
         
         
-    def apply_rule(self, rule: rule.Rule) -> List[Symbol]:
+    def apply_rule(self, rule: rule.Rule) -> word.Word:
         
         if not self.value == rule.left_side:
             raise ValueError(f'Symbol {self.value} does not match the left side {rule.left_side} of the rule {rule}.')
@@ -41,4 +42,9 @@ class Symbol(str):
     
     def __eq__(self, __x: object) -> bool:
         return super().__eq__(__x)
+    
+    
+    
+    def __hash__(self) -> int:
+        return hash(self.value)
     

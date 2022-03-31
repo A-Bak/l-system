@@ -1,5 +1,6 @@
 from typing import List
 
+import lsystem.model.word as word
 import lsystem.model.symbol as symbol
 
 
@@ -9,12 +10,10 @@ __all__ = ['Rule']
 class Rule:
     
     
-    def __init__(self, left_side: symbol.Symbol, right_side: List[symbol.Symbol]) -> None:
+    def __init__(self, left_side: symbol.Symbol, right_side: word.Word) -> None:
         super().__init__()
         
-        is_symbol = [isinstance(x, symbol.Symbol) for x in right_side]
-        
-        if not isinstance(left_side, symbol.Symbol) or not all(is_symbol):
+        if not isinstance(left_side, symbol.Symbol) or not isinstance(right_side, word):
             raise TypeError('Left and right sight of a rule must consist of Symbol (NonTerminal/Terminal) characters.')
         
         self.left_side = left_side
