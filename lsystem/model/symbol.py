@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import List, Type
 
 import lsystem.model.word as word
 import lsystem.model.rule as rule

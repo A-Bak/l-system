@@ -1,4 +1,4 @@
-from symtable import Symbol
+from __future__ import annotations
 from typing import List, Union
 
 import lsystem.model.symbol as symbol
@@ -7,7 +7,7 @@ import lsystem.model.alphabet as alphabet
 
 class Word():
 
-    def __init__(self, symbols: Union[str, List[Symbol]]) -> None:
+    def __init__(self, symbols: Union[str, List[symbol.Symbol]]) -> None:
 
         if isinstance(symbols, str):
             self.symbols = [symbol.Symbol(x) for x in symbols]

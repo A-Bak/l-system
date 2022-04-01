@@ -1,4 +1,4 @@
-from typing import List
+from __future__ import annotations
 
 import lsystem.model.word as word
 import lsystem.model.symbol as symbol
