@@ -71,7 +71,9 @@ class Alphabet:
         return f'<{self.__module__}.Alphabet({self.characters}), {hex(id(self))}>'
 
     def __str__(self) -> str:
-        return str(self.characters)
+        nt = sorted([str(x) for x in self.nonterminals])
+        t = sorted([str(x) for x in self.terminals])
+        return f'Alphabet(N={nt}, T={t})'
 
     def __eq__(self, __x: object) -> bool:
         return (isinstance(__x, self.__class__)
