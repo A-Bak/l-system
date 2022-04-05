@@ -11,6 +11,12 @@ class Alphabet:
 
     def __init__(self, nonterminals: List[symbol.Symbol], terminals: List[symbol.Symbol]) -> None:
 
+        def is_symbol(x): return isinstance(x, symbol.Symbol)
+
+        if not all(map(is_symbol, nonterminals)) or not all(map(is_symbol, terminals)):
+            raise TypeError(
+                'Alphabet nonterminals and terminals must be of class Symbol.')
+
         self.nonterminals = set(nonterminals)
         self.terminals = set(terminals)
 
