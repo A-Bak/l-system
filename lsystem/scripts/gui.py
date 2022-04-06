@@ -1,8 +1,9 @@
 from typing import Tuple
 
-import pygame
+import turtle
 
 from lsystem import LSystemRenderer, LSystem
+from lsystem.renderer import LSystemState
 
 
 __all__ = ['LSystemGUI']
@@ -23,34 +24,55 @@ class LSystemGUI():
         self.lsystem = lsystem
         self.renderer = renderer
 
-        self.line_color = line_color
-        self.background_color = background_color
+        self.start_state = renderer.current_state
 
-        pygame.init()
-        pygame.display.set_caption("L-System")
+        turtle.hideturtle()
+        turtle.degrees(360)
+        turtle.colormode(255)
+        turtle.pencolor(line_color)
 
-        self.window = pygame.display.set_mode(window_size)
-        self.window.fill(self.background_color)
-        pygame.display.flip()
+        self.window = turtle.Screen()
+        self.window.title('L-System')
+        # self.window.setup(*window_size, *self.start_position)
+        self.window.colormode(255)
+        self.window.bgcolor(background_color)
+        self.window.onscreenclick(self._on_click)
 
-    def run(self, lsystem=None):
+        self.turtle = turtle.Turtle()
+        self.turtle.hideturtle()
+        self.turtle.speed(0)
+        self._reset_turtle()
 
-        running = True
-        while running:
+        self.next_step()
 
-            for event in pygame.event.get():
+        turtle.done()
 
-                if event.type == pygame.QUIT:
-                    running = False
+    def _on_click(self, pos_x: float, pos_y: float) -> None:
+        self.next_step()
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.next_step()
+    def next_step(self) -> None:
 
-        pygame.display.quit()
+        self.window.onscreenclick(None)
+        self.turtle.clear()
+        self._reset_turtle()
 
-    def next_step(self):
+        # word = self.lsystem.next_generation()
+        word = self.lsystem.axiom
+        word = word+word+word
 
-        word = self.lsystem.next_generation()
+        self.renderer.draw(self.turtle, word)
+
+        self.window.onscreenclick(self._on_click)
+
+    def _reset_turtle(self):
+        self.turtle.penup()
+
+        self.turtle.speed(0)
+        self.turtle.setx(self.start_state.x)
+        self.turtle.sety(self.start_state.y)
+        self.turtle.seth(self.start_state.angle)
+
+        self.turtle.pendown()
 
 
 def load_lsystem(self):
@@ -66,11 +88,16 @@ def main():
 
     # Click -> Next_Step -> Click -> ...
 
+    window_size = (800, 800)
+
+    starting_position = (0, -window_size[1]/2 + 50)
+    starting_angle = 90
+
+    start_state = LSystemState(starting_position, starting_angle)
     lsystem = LSystem()
-    renderer = LSystemRenderer()
+    renderer = LSystemRenderer(start_state, 10, 90)
 
     gui = LSystemGUI(lsystem, renderer)
-    gui.run()
 
 
 if __name__ == '__main__':

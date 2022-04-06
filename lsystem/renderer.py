@@ -1,5 +1,7 @@
 from typing import Tuple
 
+from turtle import Turtle
+
 from lsystem.model.word import Word
 
 __all__ = ['LSystemRenderer']
@@ -20,9 +22,10 @@ class LSystemState:
 # TODO Shortening of edges with - subsequent steps ?
 #                               - branching ?
 
+
 class LSystemRenderer():
 
-    def __init__(self, starting_state: LSystemState, location_delta: int, angle_delta: int, ) -> None:
+    def __init__(self, starting_state: LSystemState, location_delta: int = None, angle_delta: int = None) -> None:
 
         self.current_state = starting_state
 
@@ -31,7 +34,45 @@ class LSystemRenderer():
 
         self.state_stack = []
 
-    def render(self, word: Word):
+        self.instruction_map = {
+            'F': self._move_forward,
+            '+': self._turn_right,
+            '-': self._turn_left,
+            '−': self._turn_left,
+            '[': self._store_state,
+            ']': self._load_state,
+        }
 
-        for instruction in word:
-            pass
+    def draw(self, turtle_obj: Turtle, word: Word):
+
+        print(word)
+
+        for symbol in word:
+
+            try:
+                instruction = self.instruction_map[symbol]
+                instruction(turtle_obj)
+
+            except KeyError:
+                raise ValueError(
+                    f'Invalid instruction mapping for symbol "{symbol}", not recognized.')
+
+    def _move_forward(self, turtle_obj: Turtle) -> None:
+        turtle_obj.forward(self.location_delta)
+
+    def _turn_right(self, turtle_obj: Turtle) -> None:
+        turtle_obj.right(self.angle_delta)
+
+    def _turn_left(self, turtle_obj: Turtle) -> None:
+        turtle_obj.left(self.angle_delta)
+
+    def _store_state(self, turtle_obj: Turtle) -> None:
+        self.state_stack.append(self.current_state)
+
+    def _load_state(self, turtle_obj: Turtle) -> None:
+        self.current_state = self.state_stack.pop()
+
+        turtle_obj.penup()
+        turtle_obj.setposition(self.current_state.x, self.current_state.y)
+        turtle_obj.setheading(self.current_state.angle)
+        turtle_obj.pendown()
