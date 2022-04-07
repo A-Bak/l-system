@@ -15,12 +15,18 @@ class Alphabet:
 
         if not all(map(is_symbol, nonterminals)) or not all(map(is_symbol, terminals)):
             raise TypeError(
-                'Alphabet nonterminals and terminals must be of class Symbol.')
+                'Alphabet nonterminals and terminals must be of class ')
 
         self.nonterminals = set(nonterminals)
         self.terminals = set(terminals)
 
         self.characters = self.nonterminals.union(self.terminals)
+
+    def add_nonterminal(self, s: symbol.Symbol) -> None:
+        self.nonterminals.add(s)
+
+    def add_terminal(self, s: symbol.Symbol) -> None:
+        self.terminals.add(s)
 
     def is_nonterminal(self, key: symbol.Symbol) -> bool:
         return key in self.nonterminals
