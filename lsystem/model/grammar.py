@@ -1,37 +1,37 @@
 from __future__ import annotations
-from typing import List
+from typing import TYPE_CHECKING, List
 
+if TYPE_CHECKING:
+    from lsystem.model.symbol import Symbol
+    from lsystem.model.word import Word
+    from lsystem.model.rule import Rule
 
-import lsystem.model.alphabet as alphabet
-import lsystem.model.symbol as symbol
-import lsystem.model.word as word
-import lsystem.model.rule as rule
-import lsystem.model.ruleset as ruleset
-
+from lsystem.model.alphabet import Alphabet
+from lsystem.model.ruleset import Ruleset
 
 __all__ = ['Grammar']
 
 
 class Grammar:
 
-    def __init__(self, nonterminals: List[symbol.Symbol], terminals: List[symbol.Symbol], rules: List[rule.Rule]) -> None:
+    def __init__(self, nonterminals: List[Symbol], terminals: List[Symbol], rules: List[Rule]) -> None:
 
-        self.alphabet = alphabet.Alphabet(nonterminals, terminals)
-        self.ruleset = ruleset.Ruleset(rules)
+        self.alphabet = Alphabet(nonterminals, terminals)
+        self.ruleset = Ruleset(rules)
 
-    def applicable_rules(self, s: symbol.Symbol) -> List[rule.Rule]:
+    def applicable_rules(self, s: Symbol) -> List[Rule]:
         return [r for r in self.rules if r.is_applicable(s)]
 
-    def add_nonterminal(self, s: symbol.Symbol) -> None:
+    def add_nonterminal(self, s: Symbol) -> None:
         self.alphabet.add_nonterminal(s)
 
-    def add_terminal(self, s: symbol.Symbol) -> None:
+    def add_terminal(self, s: Symbol) -> None:
         self.alphabet.add_terminal(s)
 
-    def add_rule(self, r: rule.Rule) -> None:
+    def add_rule(self, r: Rule) -> None:
         self.ruleset.add_rule(r)
 
-    def next_derivation(self, w: word.Word) -> word.Word:
+    def next_derivation(self, w: Word) -> Word:
 
         new_word = None
 

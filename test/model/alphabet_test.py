@@ -1,3 +1,5 @@
+from typing import NewType
+
 import unittest
 
 from lsystem.model.symbol import Symbol
