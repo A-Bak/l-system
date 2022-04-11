@@ -1,26 +1,28 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
 
-import lsystem.model.word as word
-import lsystem.model.symbol as symbol
+if TYPE_CHECKING:
+    from lsystem.model.word import Word
 
+from lsystem.model.symbol import Symbol
 
 __all__ = ['Rule']
 
 
 class Rule:
 
-    def __init__(self, left_side: symbol.Symbol, right_side: word.Word) -> None:
+    def __init__(self, left_side: Symbol, right_side: Word) -> None:
         super().__init__()
 
-        if not (isinstance(left_side, symbol.Symbol) or isinstance(right_side, word.Word)):
+        if not (isinstance(left_side, Symbol) or isinstance(right_side, Word)):
             raise TypeError(
                 'Left and right sight of a rule must consist of Symbol (NonTerminal/Terminal) characters.')
 
         self.left_side = left_side
         self.right_side = right_side
 
-    def is_applicable(self, s: symbol.Symbol) -> bool:
-        if not isinstance(s, symbol.Symbol):
+    def is_applicable(self, s: Symbol) -> bool:
+        if not isinstance(s, Symbol):
             raise TypeError('Symbol is ')
 
         return self.left_side == s

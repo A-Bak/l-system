@@ -1,7 +1,9 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
 
-import lsystem.model.word as word
-import lsystem.model.rule as rule
+if TYPE_CHECKING:
+    from lsystem.model.word import Word
+    from lsystem.model.rule import Rule
 
 
 __all__ = ['Symbol']
@@ -17,7 +19,7 @@ class Symbol(str):
 
         self.value = character
 
-    def apply_rule(self, rule: rule.Rule) -> word.Word:
+    def apply_rule(self, rule: Rule) -> Word:
 
         if not self.value == rule.left_side.value:
             raise ValueError(

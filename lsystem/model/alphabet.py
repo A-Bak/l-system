@@ -1,7 +1,8 @@
 from __future__ import annotations
-from typing import List
+from typing import TYPE_CHECKING, List
 
-import lsystem.model.symbol as symbol
+
+from lsystem.model.symbol import Symbol
 
 
 __all__ = ['Alphabet']
@@ -9,23 +10,29 @@ __all__ = ['Alphabet']
 
 class Alphabet:
 
-    def __init__(self, nonterminals: List[symbol.Symbol], terminals: List[symbol.Symbol]) -> None:
+    def __init__(self, nonterminals: List[Symbol], terminals: List[Symbol]) -> None:
 
-        def is_symbol(x): return isinstance(x, symbol.Symbol)
+        def is_symbol(x): return isinstance(x, Symbol)
 
         if not all(map(is_symbol, nonterminals)) or not all(map(is_symbol, terminals)):
             raise TypeError(
-                'Alphabet nonterminals and terminals must be of class Symbol.')
+                'Alphabet nonterminals and terminals must be of class ')
 
         self.nonterminals = set(nonterminals)
         self.terminals = set(terminals)
 
         self.characters = self.nonterminals.union(self.terminals)
 
-    def is_nonterminal(self, key: symbol.Symbol) -> bool:
+    def add_nonterminal(self, s: Symbol) -> None:
+        self.nonterminals.add(s)
+
+    def add_terminal(self, s: Symbol) -> None:
+        self.terminals.add(s)
+
+    def is_nonterminal(self, key: Symbol) -> bool:
         return key in self.nonterminals
 
-    def is_terminal(self, key: symbol.Symbol) -> bool:
+    def is_terminal(self, key: Symbol) -> bool:
         return key in self.terminals
 
     def __or__(self, other: object) -> Alphabet:
@@ -64,7 +71,7 @@ class Alphabet:
         t = self.terminals.intersection(other.terminals)
         return Alphabet(nt, t)
 
-    def __contains__(self, key: symbol.Symbol) -> bool:
+    def __contains__(self, key: Symbol) -> bool:
         return key in self.characters
 
     def __repr__(self) -> str:
