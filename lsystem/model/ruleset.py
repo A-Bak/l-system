@@ -13,12 +13,13 @@ __all__ = ['Ruleset']
 
 class Ruleset():
 
-    def __init__(self, rules: List[rule.Rule]) -> None:
+    def __init__(self, rules: List[rule.Rule] = None) -> None:
 
         self.rule_dict = defaultdict(list)
 
-        for r in rules:
-            self.add_rule(r)
+        if rules is not None:
+            for r in rules:
+                self.add_rule(r)
 
     def add_rule(self, r: rule.Rule) -> None:
 
