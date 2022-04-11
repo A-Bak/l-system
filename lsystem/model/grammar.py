@@ -31,10 +31,16 @@ class Grammar:
     def add_rule(self, r: Rule) -> None:
         self.ruleset.add_rule(r)
 
+    def apply_rule(self, s: Symbol) -> Word:
+        return self.ruleset.random_applicable_rule(s).right_side
+
     def next_derivation(self, w: Word) -> Word:
 
-        new_word = None
+        new_word = []
 
         for s in w:
-            # Replace symbol with the application of a rule
-            pass
+
+            derivation = self.apply_rule(s)
+            new_word.extend(derivation)
+
+        return new_word

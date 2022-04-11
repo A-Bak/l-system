@@ -48,3 +48,10 @@ class Word():
         else:
             raise TypeError(
                 'Invalid type for Word.append() method, requires a Word or Symbol argument.')
+
+    def extend(self, w: Word) -> None:
+
+        if not isinstance(w, Word):
+            raise TypeError(f'Argument {type(w)} is not of type Word.')
+
+        self.symbols.extend(w.symbols)
