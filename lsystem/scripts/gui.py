@@ -3,6 +3,7 @@ from typing import Tuple
 import turtle
 
 from lsystem import LSystemRenderer, LSystem
+import lsystem
 from lsystem.renderer import LSystemState
 
 
@@ -43,24 +44,30 @@ class LSystemGUI():
         self.turtle.speed(0)
         self._reset_turtle()
 
-        self.next_step()
+        self.display_word(lsystem.axiom)
 
         turtle.done()
+
+    def display_word(self, word) -> None:
+        self.window.onscreenclick(None)
+        self.turtle.clear()
+        self._reset_turtle()
+
+        self.renderer.draw(self.turtle, word)
+
+        self.window.onscreenclick(self._on_click)
 
     def _on_click(self, pos_x: float, pos_y: float) -> None:
         self.next_step()
 
     def next_step(self) -> None:
-
         self.window.onscreenclick(None)
         self.turtle.clear()
         self._reset_turtle()
 
-        # word = self.lsystem.next_generation()
-        word = self.lsystem.axiom
-        word = word+word+word
+        for derivation in self.lsystem.grammar.next_derivation():
 
-        self.renderer.draw(self.turtle, word)
+            self.renderer.draw(self.turtle, derivation)
 
         self.window.onscreenclick(self._on_click)
 

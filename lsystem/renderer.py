@@ -1,7 +1,8 @@
-from typing import Tuple
+from typing import Tuple, Union
 
 from turtle import Turtle
 
+from lsystem.model.symbol import Symbol
 from lsystem.model.word import Word
 
 __all__ = ['LSystemRenderer']
@@ -43,7 +44,7 @@ class LSystemRenderer():
             ']': self._load_state,
         }
 
-    def draw(self, turtle_obj: Turtle, word: Word):
+    def draw(self, turtle_obj: Turtle, word: Union[Symbol, Word]):
 
         print(word)
 
