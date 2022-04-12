@@ -51,6 +51,25 @@ class TestModelRuleset(unittest.TestCase):
 
         self.assertEqual(self.r4, rs.random_applicable_rule(Symbol('B')))
 
+    def test_iterating(self):
+        """ Test iterating over a ruleset. """
+
+        rs = Ruleset()
+
+        for _ in rs:
+            raise ValueError('Expected empty Ruleset.')
+
+        rs.add_rule(self.r1)
+        rs.add_rule(self.r2)
+        rs.add_rule(self.r3)
+
+        self.assertEqual(3, sum(1 for r in rs))
+
+        rules = [self.r1, self.r2, self.r3]
+
+        for a, b in zip(rules, rs):
+            self.assertEqual(a, b)
+
 
 if __name__ == "__main__":
     unittest.main()

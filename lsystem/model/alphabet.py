@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, List
+from typing import List
 
 
 from lsystem.model.symbol import Symbol
