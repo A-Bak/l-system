@@ -10,14 +10,13 @@ import lsystem.model.symbol as symbol
 
 class Word():
 
-    def __init__(self, symbols: Union[str, List[symbol.Symbol]]) -> None:
-
-        if isinstance(symbols, str):
+    def __init__(self, symbols: Union[str, List[symbol.Symbol]] = None) -> None:
+        if symbols is None:
+            self.symbols = []
+        elif isinstance(symbols, str):
             self.symbols = [symbol.Symbol(x) for x in symbols]
-
         elif all(map(lambda x: isinstance(x, symbol.Symbol), symbols)):
             self.symbols = symbols
-
         else:
             raise TypeError(
                 'Invalid type. Word must consist of a List[Symbol] or a str')
