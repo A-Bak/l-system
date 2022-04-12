@@ -14,10 +14,11 @@ __all__ = ['Grammar']
 
 class Grammar:
 
-    def __init__(self, nonterminals: List[Symbol], terminals: List[Symbol], rules: List[Rule]) -> None:
+    def __init__(self, nonterminals: List[Symbol], terminals: List[Symbol], rules: List[Rule], axiom: Word) -> None:
 
         self.alphabet = Alphabet(nonterminals, terminals)
         self.ruleset = Ruleset(rules)
+        self.axiom = axiom
 
     def applicable_rules(self, s: Symbol) -> List[Rule]:
         return [r for r in self.rules if r.is_applicable(s)]
