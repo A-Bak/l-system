@@ -40,6 +40,13 @@ class Word():
     def __hash__(self) -> int:
         return hash(self.__str__())
 
+    def __contains__(self, key: Symbol) -> bool:
+        return key in self.symbols
+
+    def __iter__(self) -> Symbol:
+        for s in self.symbols:
+            yield s
+
     def append(self, other: Union[symbol.Symbol, Word]) -> None:
         if isinstance(other, symbol.Symbol):
             self.symbols.append(other)
