@@ -16,12 +16,14 @@ class TestModelWord(unittest.TestCase):
 
     def test_constructor(self):
         """ Test if constructors raises TypeError fo invalid types. """
+        self.assertIsNotNone(Word())
         self.assertRaises(TypeError, Word, [1, 2, 3, 4])
         self.assertRaises(TypeError, Word, 110011)
         self.assertRaises(TypeError, Word, 101.01)
 
     def test_equals(self):
         """ Test equality of words. """
+        self.assertEqual(Word(), Word())
         self.assertEqual(Word('ABAB'), self.w1)
         self.assertEqual(self.w1, self.w2)
         self.assertNotEqual(self.w1, self.w3)
@@ -35,11 +37,19 @@ class TestModelWord(unittest.TestCase):
         self.assertEqual(word, Word('XABAB'))
         self.assertEqual('XABAB', str(word))
 
+        word = Word()
+        word.append(self.w2)
+
+        self.assertEqual(word, self.w2)
+        self.assertEqual('ABAB', str(word))
+
     def test_representation(self):
         """ Test printable output of a word. """
         s = 'ABAB'
         self.assertEqual(s, str(self.w1))
         self.assertEqual(s, str(self.w2))
+
+        self.assertEqual('', str(Word()))
 
 
 if __name__ == "__main__":
