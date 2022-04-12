@@ -26,10 +26,11 @@ class TestModelWord(unittest.TestCase):
         self.assertEqual(self.w1, self.w2)
         self.assertNotEqual(self.w1, self.w3)
 
-    def test_extend(self):
+    def test_append(self):
         """ Test extend for words - concatenation. """
 
-        word = Word('X').extend(self.w1)
+        word = Word('X')
+        word.append(self.w1)
 
         self.assertEqual(word, Word('XABAB'))
         self.assertEqual('XABAB', str(word))

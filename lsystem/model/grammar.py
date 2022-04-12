@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Union
 
 if TYPE_CHECKING:
     from lsystem.model.symbol import Symbol
@@ -34,13 +34,10 @@ class Grammar:
     def apply_rule(self, s: Symbol) -> Word:
         return self.ruleset.random_applicable_rule(s).right_side
 
-    def next_derivation(self, w: Word) -> Word:
-
-        new_word = []
+    def next_derivation(self, w: Word) -> Union[Symbol, Word]:
 
         for s in w:
-
-            derivation = self.apply_rule(s)
-            new_word.extend(derivation)
-
-        return new_word
+            if s in self.alphabet.nonterminals:
+                yield self.apply_rule(s)
+            else:
+                yield s
