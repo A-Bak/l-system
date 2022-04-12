@@ -1,3 +1,6 @@
+from __future__ import annotations
+from typing import Union
+
 
 from lsystem.model.grammar import Grammar
 from lsystem.model.symbol import Symbol
@@ -11,14 +14,17 @@ class LSystem():
 
     def __init__(self) -> None:
 
-        nt = [Symbol('F')]
-        t = [Symbol('+-')]
-        rule = Rule(Symbol('F'), Word('F+F−F−F+F'))
+        nt = [Symbol('F'), Symbol('G')]
+        t = [Symbol('+'), Symbol('-')]
+        rules = [
+            Rule(Symbol('F'), Word('F−G+F+G−F')),
+            Rule(Symbol('G'), Word('GG')),
+        ]
 
-        self.grammar = Grammar(nt, t, [rule])
+        self.grammar = Grammar(nt, t, rules)
 
-        self.axiom = 'F'
-        # self.axiom = '''F+F−F−F+F+F+F−F−F+F−F+F−F−F+F−F+F−F−F+F+F+F−F−F+F+F+F−F−F+F+F+F−F−F+F−F+F−F−F+F−F+F−F−F+F+F+F−F−F+F−F+F−F−F+F+F+F−F−F+F−F+F−F−F+F−F+F−F−F+F+F+F−F−F+F−F+F−F−F+F+F+F−F−F+F−F+F−F−F+F−F+F−F−F+F+F+F−F−F+F+F+F−F−F+F+F+F−F−F+F−F+F−F−F+F−F+F−F−F+F+F+F−F−F+F'''
+        self.axiom = Word('F−G−G')
+        self.word = self.axiom
 
         self.instructions = {
             'F': None,
@@ -28,10 +34,17 @@ class LSystem():
             ']': None,
         }
 
-        self.angle = 180
+        self.angle = 90
         self.length = 10
 
         pass
 
-    def next_generation(self):
-        pass
+    def next_derivation(self, w: Word) -> Union[Symbol, Word]:
+
+        new_word = Word()
+
+        for derivation in self.grammar.next_derivation(w):
+            new_word.append(derivation)
+            yield derivation
+
+        self.word = new_word

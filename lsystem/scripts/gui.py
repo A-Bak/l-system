@@ -53,7 +53,7 @@ class LSystemGUI():
         self.turtle.clear()
         self._reset_turtle()
 
-        self.renderer.draw(self.turtle, word)
+        self.renderer.draw(word, self.turtle)
 
         self.window.onscreenclick(self._on_click)
 
@@ -65,9 +65,11 @@ class LSystemGUI():
         self.turtle.clear()
         self._reset_turtle()
 
-        for derivation in self.lsystem.grammar.next_derivation():
+        for derivation in self.lsystem.next_derivation(self.lsystem.word):
 
-            self.renderer.draw(self.turtle, derivation)
+            self.renderer.draw(derivation, self.turtle)
+
+        print(self.lsystem.word)
 
         self.window.onscreenclick(self._on_click)
 
@@ -98,11 +100,13 @@ def main():
     window_size = (800, 800)
 
     starting_position = (0, -window_size[1]/2 + 50)
-    starting_angle = 90
-
+    starting_angle = 0
     start_state = LSystemState(starting_position, starting_angle)
     lsystem = LSystem()
-    renderer = LSystemRenderer(start_state, 10, 90)
+
+    loc_delta = 10
+    angle_delta = 120
+    renderer = LSystemRenderer(start_state, loc_delta, angle_delta)
 
     gui = LSystemGUI(lsystem, renderer)
 
