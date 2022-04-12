@@ -10,14 +10,13 @@ import lsystem.model.symbol as symbol
 
 class Word():
 
-    def __init__(self, symbols: Union[str, List[symbol.Symbol]]) -> None:
-
-        if isinstance(symbols, str):
+    def __init__(self, symbols: Union[str, List[symbol.Symbol]] = None) -> None:
+        if symbols is None:
+            self.symbols = []
+        elif isinstance(symbols, str):
             self.symbols = [symbol.Symbol(x) for x in symbols]
-
         elif all(map(lambda x: isinstance(x, symbol.Symbol), symbols)):
             self.symbols = symbols
-
         else:
             raise TypeError(
                 'Invalid type. Word must consist of a List[Symbol] or a str')
@@ -40,6 +39,13 @@ class Word():
 
     def __hash__(self) -> int:
         return hash(self.__str__())
+
+    def __contains__(self, key: Symbol) -> bool:
+        return key in self.symbols
+
+    def __iter__(self) -> Symbol:
+        for s in self.symbols:
+            yield s
 
     def append(self, other: Union[symbol.Symbol, Word]) -> None:
         if isinstance(other, symbol.Symbol):
