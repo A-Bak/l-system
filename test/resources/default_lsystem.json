@@ -1,0 +1,34 @@
+{
+    "grammar": {
+        "nonterminals": [
+            "G",
+            "F"
+        ],
+        "terminals": [
+            "+",
+            "-"
+        ],
+        "rules": [
+            [
+                "F",
+                "F+G"
+            ],
+            [
+                "G",
+                "F-G"
+            ]
+        ],
+        "axiom": "F"
+    },
+    "mapping": {
+        "F": null,
+        "+": null,
+        "-": null,
+        "[": null,
+        "]": null
+    },
+    "config": {
+        "length": 7,
+        "angle": 90
+    }
+}
