@@ -1,6 +1,5 @@
 from __future__ import annotations
-from dis import Instruction
-from typing import Callable, Tuple, Union
+from typing import Callable
 
 from functools import singledispatchmethod
 from turtle import Turtle
@@ -8,15 +7,11 @@ from turtle import Turtle
 from lsystem.model.symbol import Symbol
 from lsystem.model.word import Word
 
+from lsystem.config import LSystemConfig
+from lsystem.mapping import LSystemMapping
+
+
 __all__ = ['LSystemRenderer']
-
-
-class LSystemState:
-
-    def __init__(self, location: Tuple[int, int], angle: int) -> None:
-        self.x = location[0]
-        self.y = location[1]
-        self.angle = angle
 
 
 # TODO Saving and loading instruction map through LSystem
@@ -25,14 +20,16 @@ class LSystemState:
 #                               - branching ?
 
 
+# TODO Convert Dict[Symbol, InstructionEnum] -> Dict[Symbol, Method] for each instruction
+
 class LSystemRenderer():
 
-    def __init__(self, starting_state: LSystemState, location_delta: int = None, angle_delta: int = None) -> None:
+    def __init__(self, mapping: LSystemMapping, configuration: LSystemConfig) -> None:
 
-        self.current_state = starting_state
+        self.current_state = configuration.starting_state
 
-        self.location_delta = location_delta
-        self.angle_delta = angle_delta
+        self.location_delta = configuration.segment_length
+        self.angle_delta = configuration.angle_offset
 
         self.state_stack = []
 
