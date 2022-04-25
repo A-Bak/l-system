@@ -24,6 +24,7 @@ class LSystem:
         self.grammar = grammar
         self.instruction_mapping = instruction_mapping
         self.configuration = configuration
+        self.word = grammar.axiom
 
     def next_derivation(self, w: Word) -> Union[Symbol, Word]:
 

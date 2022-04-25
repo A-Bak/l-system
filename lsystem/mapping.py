@@ -5,7 +5,7 @@ from lsystem.model.symbol import Symbol
 from lsystem.common import Instruction
 
 
-__all__ = ['LSystemConfig']
+__all__ = ['LSystemMapping']
 
 
 class LSystemMapping:
