@@ -19,7 +19,7 @@ class TestModelSymbol(unittest.TestCase):
 
     def test_json(self):
 
-        file_path = 'test/resources/default_lsystem.json'
+        file_path = 'resources/dragon_curve.json'
         self.assertTrue(os.path.exists(file_path))
 
         with open(file_path, 'r') as f:
@@ -37,6 +37,8 @@ class TestModelSymbol(unittest.TestCase):
             self.assertEqual(r1, r2)
 
         self.assertIsNotNone(ls1.to_json())
+
+        ls1.to_json('resources/test.json')
 
 
 if __name__ == "__main__":

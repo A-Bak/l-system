@@ -1,8 +1,8 @@
 {
     "grammar": {
         "nonterminals": [
-            "G",
-            "F"
+            "F",
+            "G"
         ],
         "terminals": [
             "+",
@@ -22,13 +22,19 @@
     },
     "mapping": {
         "F": "FORWARD",
+        "G": "FORWARD",
         "+": "RIGHT",
         "-": "LEFT",
         "[": "SAVE",
         "]": "LOAD"
     },
     "config": {
-        "length": 7,
-        "angle": 90
+        "segment_length": 7,
+        "angle_offset": 90,
+        "starting_state": {
+            "x": 0,
+            "y": 0,
+            "angle": 0
+        }
     }
 }
