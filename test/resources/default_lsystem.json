@@ -21,11 +21,11 @@
         "axiom": "F"
     },
     "mapping": {
-        "F": null,
-        "+": null,
-        "-": null,
-        "[": null,
-        "]": null
+        "F": "FORWARD",
+        "+": "RIGHT",
+        "-": "LEFT",
+        "[": "SAVE",
+        "]": "LOAD"
     },
     "config": {
         "length": 7,

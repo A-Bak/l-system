@@ -6,40 +6,21 @@ if TYPE_CHECKING:
 
 import json
 
+from lsystem.config import LSystemConfig
+from lsystem.mapping import LSystemMapping
+
 from lsystem.model.grammar import Grammar
 from lsystem.model.symbol import Symbol
 from lsystem.model.word import Word
 from lsystem.model.rule import Rule
 
+
 __all__ = ['LSystem', 'LSystemJSONEncoder', 'LSystemJSONDecoder']
 
 
-class LSystem():
+class LSystem:
 
     def __init__(self, grammar: Grammar, instruction_mapping: Any, configuration: Any) -> None:
-
-        # nt = [Symbol('F'), Symbol('G')]
-        # t = [Symbol('+'), Symbol('-')]
-        # rules = [
-        #     Rule(Symbol('F'), Word('F+G')),
-        #     Rule(Symbol('G'), Word('F-G')),
-        # ]
-        # axiom = Word('F')
-
-        # self.grammar = Grammar(nt, t, rules, axiom)
-        # self.word = axiom
-
-        # self.instruction_mapping = {
-        #     'F': None,
-        #     '+': None,
-        #     '-': None,
-        #     '[': None,
-        #     ']': None,
-        # }
-
-        # self.angle = 90
-        # self.length = 7
-
         self.grammar = grammar
         self.instruction_mapping = instruction_mapping
         self.configuration = configuration
@@ -100,8 +81,8 @@ class LSystemJSONEncoder(json.JSONEncoder):
                 'rules': rule_list,
                 'axiom': axiom
             },
-            'mapping': o.instruction_mapping,
-            'config': o.configuration
+            'mapping': o.instruction_mapping.to_json(),
+            'config': o.configuration.to_json()
         }
 
         return lsystem_dict
@@ -123,7 +104,7 @@ class LSystemJSONDecoder(json.JSONDecoder):
 
         grammar = Grammar(nonterminals, terminals, rules, axiom)
 
-        instruction_mapping = json_dict['mapping']
-        config = json_dict['config']
+        instruction_mapping = LSystemMapping.from_json(json_dict['mapping'])
+        config = LSystemConfig(json_dict['config'])
 
         return LSystem(grammar, instruction_mapping, config)
