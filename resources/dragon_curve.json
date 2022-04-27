@@ -29,7 +29,8 @@
         "]": "LOAD"
     },
     "config": {
-        "segment_length": 7,
+        "segment_length": 50,
+        "length_reduction": 0.80,
         "angle_offset": 90,
         "starting_state": {
             "x": 0,

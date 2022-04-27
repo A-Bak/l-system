@@ -65,9 +65,9 @@ class LSystemGUI():
         self._reset_turtle()
 
         for derivation in self.lsystem.next_derivation(self.lsystem.word):
-
             self.renderer.draw(derivation, self.turtle)
 
+        self.renderer.reduce_length()
         print(self.lsystem.word)
 
         self.window.onscreenclick(self._on_click)

@@ -10,7 +10,7 @@ __all__ = ['LSystemConfig']
 class LSystemConfig:
 
     @overload
-    def __init__(self, angle_offset: int, segment_length: int, starting_state: LSystemState) -> None:
+    def __init__(self, angle_offset: int, segment_length: int, length_reduction: float, starting_state: LSystemState) -> None:
         ...
 
     @overload
@@ -22,12 +22,14 @@ class LSystemConfig:
         if len(args) == 1 and isinstance(args[0], dict):
             self.angle_offset = args[0]['angle_offset']
             self.segment_length = args[0]['segment_length']
+            self.length_reduction = args[0]['length_reduction']
             self.starting_state = LSystemState(args[0]['starting_state'])
 
         elif len(args) == 3 and isinstance(args[1], int) and isinstance(args[2], int) and isinstance(args[3], LSystemState):
             self.angle_offset = args[0]
             self.segment_length = args[1]
-            self.starting_state = args[2]
+            self.length_reduction = args[2]
+            self.starting_state = args[3]
 
         else:
             raise NotImplementedError(
@@ -36,6 +38,7 @@ class LSystemConfig:
     def to_json(self) -> Mapping(str, int):
         return {'angle_offset': self.angle_offset,
                 'segment_length': self.segment_length,
+                'length_reduction': self.length_reduction,
                 'starting_state': self.starting_state.to_json()}
 
     @classmethod

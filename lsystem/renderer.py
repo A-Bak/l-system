@@ -14,21 +14,14 @@ from lsystem.model.word import Word
 __all__ = ['LSystemRenderer']
 
 
-# TODO Saving and loading instruction map through LSystem
-
-# TODO Shortening of edges with - subsequent steps ?
-#                               - branching ?
-
-
-# TODO Convert Dict[Symbol, InstructionEnum] -> Dict[Symbol, Method] for each instruction
-
 class LSystemRenderer():
 
     def __init__(self, lsystem: LSystem) -> None:
-        self.current_state = lsystem.config.starting_state
-        self.location_delta = lsystem.config.segment_length
         self.angle_delta = lsystem.config.angle_offset
+        self.position_delta = lsystem.config.segment_length
+        self.length_reduction = lsystem.config.length_reduction
 
+        self.current_state = lsystem.config.starting_state
         self.state_stack = []
 
         self.instruction_codes = {
@@ -66,7 +59,7 @@ class LSystemRenderer():
                 f'Invalid instruction mapping for symbol "{symbol}", not recognized.')
 
     def _move_forward(self, turtle_obj: Turtle) -> None:
-        turtle_obj.forward(self.location_delta)
+        turtle_obj.forward(self.position_delta)
 
     def _turn_right(self, turtle_obj: Turtle) -> None:
         turtle_obj.right(self.angle_delta)
@@ -84,3 +77,6 @@ class LSystemRenderer():
         turtle_obj.setposition(self.current_state.x, self.current_state.y)
         turtle_obj.setheading(self.current_state.angle)
         turtle_obj.pendown()
+
+    def reduce_length(self) -> None:
+        self.position_delta *= self.length_reduction
