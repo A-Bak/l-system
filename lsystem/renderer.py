@@ -4,11 +4,11 @@ from typing import Callable
 from functools import singledispatchmethod
 from turtle import Turtle
 
+from lsystem.common import Instruction
+from lsystem.lsystem import LSystem
+
 from lsystem.model.symbol import Symbol
 from lsystem.model.word import Word
-
-from lsystem.config import LSystemConfig
-from lsystem.mapping import LSystemMapping
 
 
 __all__ = ['LSystemRenderer']
@@ -24,24 +24,23 @@ __all__ = ['LSystemRenderer']
 
 class LSystemRenderer():
 
-    def __init__(self, mapping: LSystemMapping, configuration: LSystemConfig) -> None:
-
-        self.current_state = configuration.starting_state
-
-        self.location_delta = configuration.segment_length
-        self.angle_delta = configuration.angle_offset
+    def __init__(self, lsystem: LSystem) -> None:
+        self.current_state = lsystem.config.starting_state
+        self.location_delta = lsystem.config.segment_length
+        self.angle_delta = lsystem.config.angle_offset
 
         self.state_stack = []
 
-        self.instruction_map = {
-            Symbol('F'): self._move_forward,
-            Symbol('G'): self._move_forward,
-            Symbol('+'): self._turn_right,
-            Symbol('-'): self._turn_left,
-            Symbol('−'): self._turn_left,
-            Symbol('['): self._store_state,
-            Symbol(']'): self._load_state,
+        self.instruction_codes = {
+            Instruction.forward: self._move_forward,
+            Instruction.turn_right: self._turn_right,
+            Instruction.turn_left: self._turn_left,
+            Instruction.save_state: self._store_state,
+            Instruction.load_state: self._load_state,
         }
+
+        self.instruction_map = {symbol: self.instruction_codes[instruction_enum]
+                                for symbol, instruction_enum in lsystem.instruction_mapping.items()}
 
     @singledispatchmethod
     def draw(self, other, turtle_obj: Turtle):

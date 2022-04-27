@@ -20,10 +20,10 @@ __all__ = ['LSystem', 'LSystemJSONEncoder', 'LSystemJSONDecoder']
 
 class LSystem:
 
-    def __init__(self, grammar: Grammar, instruction_mapping: Any, configuration: Any) -> None:
+    def __init__(self, grammar: Grammar, instruction_mapping: LSystemMapping, config: LSystemConfig) -> None:
         self.grammar = grammar
         self.instruction_mapping = instruction_mapping
-        self.configuration = configuration
+        self.config = config
         self.word = grammar.axiom
 
     def next_derivation(self, w: Word) -> Union[Symbol, Word]:
@@ -83,7 +83,7 @@ class LSystemJSONEncoder(json.JSONEncoder):
                 'axiom': axiom
             },
             'mapping': o.instruction_mapping.to_json(),
-            'config': o.configuration.to_json()
+            'config': o.config.to_json()
         }
 
         return lsystem_dict

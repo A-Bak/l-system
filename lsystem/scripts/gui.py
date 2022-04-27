@@ -3,8 +3,6 @@ from typing import Tuple
 import turtle
 
 from lsystem import LSystemRenderer, LSystem
-import lsystem
-from lsystem.renderer import LSystemState
 
 
 __all__ = ['LSystemGUI']
@@ -31,6 +29,7 @@ class LSystemGUI():
         turtle.degrees(360)
         turtle.colormode(255)
         turtle.pencolor(line_color)
+        turtle.tracer(5, 25)
 
         self.window = turtle.Screen()
         self.window.title('L-System')
@@ -44,7 +43,7 @@ class LSystemGUI():
         self.turtle.speed(0)
         self._reset_turtle()
 
-        self.display_word(lsystem.axiom)
+        self.display_word(lsystem.word)
 
         turtle.done()
 
@@ -90,23 +89,12 @@ def load_lsystem(self):
 
 def main():
 
-    # Load LSystem from JSON and pass it to GUI
-    # Initialize renderer
-
-    # Draw Initial Axiom
-
-    # Click -> Next_Step -> Click -> ...
-
     window_size = (800, 800)
 
-    starting_position = (0, -window_size[1]/2 + 50)
-    starting_angle = 0
-    start_state = LSystemState(starting_position, starting_angle)
-    lsystem = LSystem()
+    lsystem = LSystem.from_json(
+        path_to_file='resources/dragon_curve.json')
 
-    loc_delta = 10
-    angle_delta = 120
-    renderer = LSystemRenderer(start_state, loc_delta, angle_delta)
+    renderer = LSystemRenderer(lsystem)
 
     gui = LSystemGUI(lsystem, renderer)
 
