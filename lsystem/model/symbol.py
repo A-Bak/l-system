@@ -28,7 +28,7 @@ class Symbol(str):
         return rule.right_side
 
     def __repr__(self) -> str:
-        return f'<{self.__module__}.Symbol, {hex(id(self))}>'
+        return f'<{self.__module__}.Symbol, "{self.value}", {hex(id(self))}>'
 
     def __str__(self) -> str:
         return self.value
