@@ -25,7 +25,7 @@ class Word():
         return all(map(lambda x: x in alphabet, self.symbols))
 
     def __repr__(self) -> str:
-        return f'<{self.__module__}.Word, {hex(id(self))}>'
+        return f'<{self.__module__}.Word, "{"".join(self.symbols)}", {hex(id(self))}>'
 
     def __str__(self) -> str:
         return ''.join(map(str, self.symbols))
