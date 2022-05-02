@@ -9,6 +9,7 @@ from turtle import Turtle, TurtleScreen
 from lsystem.common import Instruction
 from lsystem.config import LSystemConfig
 from lsystem.mapping import LSystemMapping
+from lsystem.state import LSystemState
 
 from lsystem.model.symbol import Symbol
 from lsystem.model.word import Word
@@ -16,9 +17,6 @@ from lsystem.model.word import Word
 
 __all__ = ['LSystemRenderer']
 
-
-# TODO: Move turtle_obj into renderer -> init LSystem and LSystemRenderer in LSystemGUI constructor?
-# TODO: Increase turtle.tracer() n with every step, reduce turtle.tracer() delay with every step
 
 # TODO: Add incremental changes - length/angle changes per generation
 #                               - length/angle changes per branch
@@ -34,7 +32,6 @@ class BaseRenderer:
         self.angle_delta = config.angle_offset
         self.position_delta = config.segment_length
 
-        self.current_state = config.starting_state
         self.state_stack = []
 
         self.instruction_codes = {
@@ -75,15 +72,20 @@ class BaseRenderer:
         self.turtle_obj.left(self.angle_delta)
 
     def _store_state(self) -> None:
-        self.state_stack.append(self.current_state)
+        self.state_stack.append(self.current_state())
 
     def _load_state(self) -> None:
-        self.current_state = self.state_stack.pop()
+        state = self.state_stack.pop()
 
         self.turtle_obj.penup()
-        self.turtle_obj.setposition(self.current_state.x, self.current_state.y)
-        self.turtle_obj.setheading(self.current_state.angle)
+        self.turtle_obj.setposition(state.x, state.y)
+        self.turtle_obj.setheading(state.angle)
         self.turtle_obj.pendown()
+
+    def current_state(self) -> LSystemState:
+        return LSystemState(self.turtle_obj.xcor(),
+                            self.turtle_obj.ycor(),
+                            self.turtle_obj.heading())
 
 
 class LSystemRenderer(BaseRenderer):
@@ -138,4 +140,10 @@ class LSystemRenderer(BaseRenderer):
             self._draw_element(derivation)
 
     def incremental_changes(self) -> None:
+
+        n = int(turtle.tracer() * 2)
+        delay = int(turtle.delay() / 2)
+
+        turtle.tracer(n, delay)
+
         self.position_delta *= self.config.length_reduction

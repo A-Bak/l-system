@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Mapping, overload
+from typing import Mapping, Union, overload
 
 
 __all__ = ['LSystemState']
@@ -12,7 +12,7 @@ class LSystemState:
         ...
 
     @overload
-    def __init__(self, x: int, y: int, angle: int) -> None:
+    def __init__(self, x: Union[int, float], y: Union[int, float], angle: Union[int, float]) -> None:
         ...
 
     def __init__(self, *args) -> None:
@@ -22,7 +22,7 @@ class LSystemState:
             self.y = args[0]['y']
             self.angle = args[0]['angle']
 
-        elif len(args) == 3 and all(map(lambda x: isinstance(x, int), args)):
+        elif len(args) == 3 and all(map(lambda x: isinstance(x, (int, float)), args)):
             self.x = args[0]
             self.y = args[1]
             self.angle = args[2]
