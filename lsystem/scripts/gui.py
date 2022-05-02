@@ -1,4 +1,8 @@
-from typing import Tuple
+from __future__ import annotations
+from typing import TYPE_CHECKING, Tuple
+
+if TYPE_CHECKING:
+    from lsystem.model.word import Word
 
 import turtle
 
@@ -15,88 +19,72 @@ DEFAULT_BACKGROUND_COLOR = (255, 255, 255)
 
 class LSystemGUI():
 
-    def __init__(self, lsystem: LSystem, renderer: LSystemRenderer,
-                 window_size: Tuple[int, int] = DEFAULT_WINDOW_SIZE,
-                 line_color: Tuple[int, int, int] = DEFAULT_LINE_COLOR,
-                 background_color: Tuple[int, int, int] = DEFAULT_BACKGROUND_COLOR) -> None:
+    def __init__(self) -> None:
 
-        self.lsystem = lsystem
-        self.renderer = renderer
+        self.screen = self.init_screen()
 
-        self.start_state = renderer.current_state
+        # TODO: Unfinished:
+        # file_path = 'resources/plant_edge_rewriting_1.json'
+
+        # file_path = 'resources/dragon_curve.json'
+        # file_path = 'resources/hexagonal_gosper_curve.json'
+        # file_path = 'resources/quadratic_koch_island.json'
+        # file_path = 'resources/sierpinsky_triangle.json'
+        file_path = 'resources/squared_squares.json'
+
+        self.lsystem = LSystem.from_json(path_to_file=file_path)
+
+        self.renderer = LSystemRenderer(self.screen,
+                                        self.lsystem.config,
+                                        self.lsystem.instruction_mapping)
+
+        self.display_word(self.lsystem.word)
+
+    def init_screen(self,
+                    window_size: Tuple[int, int] = DEFAULT_WINDOW_SIZE,
+                    line_color: Tuple[int, int, int] = DEFAULT_LINE_COLOR,
+                    background_color: Tuple[int, int, int] = DEFAULT_BACKGROUND_COLOR) -> turtle.TurtleScreen:
 
         turtle.hideturtle()
         turtle.degrees(360)
         turtle.colormode(255)
         turtle.pencolor(line_color)
-        turtle.tracer(5, 25)
+        turtle.tracer(10, 25)
 
-        self.window = turtle.Screen()
-        self.window.title('L-System')
-        # self.window.setup(*window_size, *self.start_position)
-        self.window.colormode(255)
-        self.window.bgcolor(background_color)
-        self.window.onscreenclick(self._on_click)
+        screen = turtle.Screen()
+        screen.title('L-System')
+        # screen.setup(*window_size)
+        screen.colormode(255)
+        screen.bgcolor(background_color)
+        screen.onscreenclick(self._on_click)
 
-        self.turtle = turtle.Turtle()
-        self.turtle.hideturtle()
-        self.turtle.speed(0)
-        self._reset_turtle()
-
-        self.display_word(lsystem.word)
-
-        turtle.done()
-
-    def display_word(self, word) -> None:
-        self.window.onscreenclick(None)
-        self.turtle.clear()
-        self._reset_turtle()
-
-        self.renderer.draw(word, self.turtle)
-
-        self.window.onscreenclick(self._on_click)
+        return screen
 
     def _on_click(self, pos_x: float, pos_y: float) -> None:
-        self.next_step()
+        self.display_word()
 
-    def next_step(self) -> None:
-        self.window.onscreenclick(None)
-        self.turtle.clear()
-        self._reset_turtle()
+    def display_word(self, word: Word = None) -> None:
 
-        for derivation in self.lsystem.next_derivation(self.lsystem.word):
-            self.renderer.draw(derivation, self.turtle)
+        if word is None:
+            word = self.lsystem.next_derivation(self.lsystem.word)
 
-        self.renderer.reduce_length()
-        print(self.lsystem.word)
+        self.screen.onscreenclick(None)
+        self.renderer.draw(word)
+        self.screen.onscreenclick(self._on_click)
 
-        self.window.onscreenclick(self._on_click)
+        if word is not None:
+            print(word)
+        else:
+            print(self.lsystem.word)
 
-    def _reset_turtle(self):
-        self.turtle.penup()
-
-        self.turtle.speed(0)
-        self.turtle.setx(self.start_state.x)
-        self.turtle.sety(self.start_state.y)
-        self.turtle.seth(self.start_state.angle)
-
-        self.turtle.pendown()
-
-
-def load_lsystem(self):
-    pass
+        turtle.done()
 
 
 def main():
 
     window_size = (800, 800)
 
-    lsystem = LSystem.from_json(
-        path_to_file='resources/dragon_curve.json')
-
-    renderer = LSystemRenderer(lsystem)
-
-    gui = LSystemGUI(lsystem, renderer)
+    gui = LSystemGUI()
 
 
 if __name__ == '__main__':
