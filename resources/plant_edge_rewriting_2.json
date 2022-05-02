@@ -10,7 +10,7 @@
         "rules": [
             [
                 "F",
-                "F[+F]F[-F]F"
+                "F[+F]F[-F][F]"
             ]
         ],
         "axiom": "F"
@@ -24,8 +24,8 @@
     },
     "config": {
         "segment_length": 200,
-        "length_reduction": 0.40,
-        "angle_offset": 25,
+        "length_reduction": 0.55,
+        "angle_offset": 20,
         "starting_state": {
             "x": 0,
             "y": -400,

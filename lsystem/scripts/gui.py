@@ -23,10 +23,14 @@ class LSystemGUI():
 
         self.screen = self.init_screen()
 
-        # TODO: Unfinished:
         # file_path = 'resources/plant_edge_rewriting_1.json'
+        # file_path = 'resources/plant_edge_rewriting_2.json'
+        # file_path = 'resources/plant_node_rewriting_1.json'
+        file_path = 'resources/plant_node_rewriting_2.json'
 
-        file_path = 'resources/dragon_curve.json'
+        # file_path = 'resources/stochastic_plant_edge_rewriting.json'
+
+        # file_path = 'resources/dragon_curve.json'
         # file_path = 'resources/hexagonal_gosper_curve.json'
         # file_path = 'resources/quadratic_koch_island.json'
         # file_path = 'resources/sierpinsky_triangle.json'
@@ -49,7 +53,7 @@ class LSystemGUI():
         turtle.degrees(360)
         turtle.colormode(255)
         turtle.pencolor(line_color)
-        turtle.tracer(10, 25)
+        turtle.tracer(2, 100)
 
         screen = turtle.Screen()
         screen.title('L-System')
