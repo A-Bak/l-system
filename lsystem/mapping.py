@@ -10,14 +10,11 @@ __all__ = ['LSystemMapping']
 
 class LSystemMapping(dict):
 
-    # def __init__(self, instruction_mapping: Mapping[Symbol, Instruction]) -> None:
-    #     self.mapping = instruction_mapping
-
     def __init__(self, *arg, **kw) -> None:
         super(LSystemMapping, self).__init__(*arg, **kw)
 
     def to_json(self) -> Mapping[str, str]:
-        return {str(key): str(value) for key, value in self.__dict__.items()}
+        return {str(key): str(value) for key, value in self.items()}
 
     @classmethod
     def from_json(cls, str_dict: Mapping[str, str]) -> LSystemMapping:
