@@ -26,11 +26,11 @@ class LSystemGUI():
         # TODO: Unfinished:
         # file_path = 'resources/plant_edge_rewriting_1.json'
 
-        # file_path = 'resources/dragon_curve.json'
+        file_path = 'resources/dragon_curve.json'
         # file_path = 'resources/hexagonal_gosper_curve.json'
         # file_path = 'resources/quadratic_koch_island.json'
         # file_path = 'resources/sierpinsky_triangle.json'
-        file_path = 'resources/squared_squares.json'
+        # file_path = 'resources/squared_squares.json'
 
         self.lsystem = LSystem.from_json(path_to_file=file_path)
 
@@ -65,17 +65,17 @@ class LSystemGUI():
 
     def display_word(self, word: Word = None) -> None:
 
-        if word is None:
-            word = self.lsystem.next_derivation(self.lsystem.word)
+        displayed_word = word if word is not None else self.lsystem.next_derivation_gen(
+            self.lsystem.word)
 
         self.screen.onscreenclick(None)
-        self.renderer.draw(word)
+        self.renderer.draw(displayed_word)
         self.screen.onscreenclick(self._on_click)
 
         if word is not None:
-            print(word)
+            print(f'{word}\n')
         else:
-            print(self.lsystem.word)
+            print(f'{self.lsystem.word}\n')
 
         turtle.done()
 

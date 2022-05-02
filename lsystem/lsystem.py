@@ -27,7 +27,15 @@ class LSystem:
         self.word = grammar.axiom
 
     def next_derivation(self, w: Word) -> Union[Symbol, Word]:
+        new_word = Word()
 
+        for derivation in self.grammar.next_derivation(w):
+            new_word.append(derivation)
+
+        self.word = new_word
+        return new_word
+
+    def next_derivation_gen(self, w: Word) -> Union[Symbol, Word]:
         new_word = Word()
 
         for derivation in self.grammar.next_derivation(w):
