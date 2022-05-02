@@ -6,6 +6,7 @@ __all__ = ['Instruction']
 
 
 class Instruction(Enum):
+    nop = "NOP"
     forward = "FORWARD"
     turn_left = "LEFT"
     turn_right = "RIGHT"

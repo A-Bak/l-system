@@ -38,6 +38,7 @@ class BaseRenderer:
         self.state_stack = []
 
         self.instruction_codes = {
+            Instruction.nop: self._nop,
             Instruction.forward: self._move_forward,
             Instruction.turn_right: self._turn_right,
             Instruction.turn_left: self._turn_left,
@@ -60,6 +61,9 @@ class BaseRenderer:
         except KeyError:
             raise ValueError(
                 f'Invalid instruction mapping for symbol "{symbol}", not recognized.')
+
+    def _nop(self) -> None:
+        pass
 
     def _move_forward(self) -> None:
         self.turtle_obj.forward(self.position_delta)
