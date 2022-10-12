@@ -5,18 +5,18 @@ from typing import List
 from lsystem.model.symbol import Symbol
 
 
-__all__ = ['Alphabet']
+__all__ = ["Alphabet"]
 
 
 class Alphabet:
-
     def __init__(self, nonterminals: List[Symbol], terminals: List[Symbol]) -> None:
-
-        def is_symbol(x): return isinstance(x, Symbol)
+        def is_symbol(x):
+            return isinstance(x, Symbol)
 
         if not all(map(is_symbol, nonterminals)) or not all(map(is_symbol, terminals)):
             raise TypeError(
-                'Alphabet nonterminals and terminals must be of class ')
+                f"Alphabet nonterminals and terminals must be of class {Symbol}."
+            )
 
         self.nonterminals = set(nonterminals)
         self.terminals = set(terminals)
@@ -41,7 +41,8 @@ class Alphabet:
     def union(self, other: Alphabet) -> Alphabet:
         if not isinstance(other, self.__class__):
             raise TypeError(
-                f'Invalid operand {other}. Union needs two operands of type {self.__module__}.Alphabet')
+                f"Invalid operand {other}. Union needs two operands of type {self.__module__}.Alphabet"
+            )
 
         nt = self.nonterminals.union(other.nonterminals)
         t = self.terminals.union(other.terminals)
@@ -53,7 +54,8 @@ class Alphabet:
     def difference(self, other: object) -> Alphabet:
         if not isinstance(other, self.__class__):
             raise TypeError(
-                f'Invalid operand {other}. Difference needs two operands of type {self.__module__}.Alphabet')
+                f"Invalid operand {other}. Difference needs two operands of type {self.__module__}.Alphabet"
+            )
 
         nt = self.nonterminals.difference(other.nonterminals)
         t = self.terminals.difference(other.terminals)
@@ -65,7 +67,8 @@ class Alphabet:
     def intersection(self, other: object) -> Alphabet:
         if not isinstance(other, self.__class__):
             raise TypeError(
-                f'Invalid operand {other}. Intersection needs two operands of type {self.__module__}.Alphabet')
+                f"Invalid operand {other}. Intersection needs two operands of type {self.__module__}.Alphabet"
+            )
 
         nt = self.nonterminals.intersection(other.nonterminals)
         t = self.terminals.intersection(other.terminals)
@@ -75,17 +78,19 @@ class Alphabet:
         return key in self.characters
 
     def __repr__(self) -> str:
-        return f'<{self.__module__}.Alphabet({self.characters}), {hex(id(self))}>'
+        return f"<{self.__module__}.Alphabet({self.characters}), {hex(id(self))}>"
 
     def __str__(self) -> str:
         nt = sorted([str(x) for x in self.nonterminals])
         t = sorted([str(x) for x in self.terminals])
-        return f'Alphabet(N={nt}, T={t})'
+        return f"Alphabet(N={nt}, T={t})"
 
     def __eq__(self, __x: object) -> bool:
-        return (isinstance(__x, self.__class__)
-                and __x.nonterminals == self.nonterminals
-                and __x.terminals == self.terminals)
+        return (
+            isinstance(__x, self.__class__)
+            and __x.nonterminals == self.nonterminals
+            and __x.terminals == self.terminals
+        )
 
     def __hash__(self) -> int:
         return hash(self.value)

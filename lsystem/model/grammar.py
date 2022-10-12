@@ -9,13 +9,17 @@ if TYPE_CHECKING:
 from lsystem.model.alphabet import Alphabet
 from lsystem.model.ruleset import Ruleset
 
-__all__ = ['Grammar']
+__all__ = ["Grammar"]
 
 
 class Grammar:
-
-    def __init__(self, nonterminals: List[Symbol], terminals: List[Symbol], rules: List[Rule], axiom: Word) -> None:
-
+    def __init__(
+        self,
+        nonterminals: List[Symbol],
+        terminals: List[Symbol],
+        rules: List[Rule],
+        axiom: Word,
+    ) -> None:
         self.alphabet = Alphabet(nonterminals, terminals)
         self.ruleset = Ruleset(rules)
         self.axiom = axiom
@@ -36,7 +40,6 @@ class Grammar:
         return self.ruleset.random_applicable_rule(s).right_side
 
     def next_derivation(self, w: Word) -> Union[Symbol, Word]:
-
         for s in w:
             if s in self.alphabet.nonterminals:
                 yield self.apply_rule(s)

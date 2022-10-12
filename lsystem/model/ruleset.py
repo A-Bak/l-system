@@ -10,11 +10,10 @@ from collections import defaultdict
 from lsystem.model.rule import Rule
 
 
-__all__ = ['Ruleset']
+__all__ = ["Ruleset"]
 
 
-class Ruleset():
-
+class Ruleset:
     def __init__(self, rules: List[Rule] = None) -> None:
 
         self.rule_dict = defaultdict(list)
@@ -26,8 +25,7 @@ class Ruleset():
     def add_rule(self, r: Rule) -> None:
 
         if not isinstance(r, Rule):
-            raise TypeError(
-                f'Invalid type for {r}, input must be of type Rule.')
+            raise TypeError(f"Invalid type for {r}, input must be of type Rule.")
 
         self.rule_dict[r.left_side].append(r)
 
@@ -39,5 +37,4 @@ class Ruleset():
 
     def __iter__(self) -> Rule:
         for rule_list in self.rule_dict.values():
-            for rule in rule_list:
-                yield rule
+            yield from rule_list
