@@ -9,7 +9,7 @@ import turtle
 from lsystem import LSystemRenderer, LSystem
 
 
-__all__ = ['LSystemGUI']
+__all__ = ["LSystemGUI"]
 
 
 DEFAULT_WINDOW_SIZE = (800, 800)
@@ -17,8 +17,7 @@ DEFAULT_LINE_COLOR = (0, 0, 0)
 DEFAULT_BACKGROUND_COLOR = (255, 255, 255)
 
 
-class LSystemGUI():
-
+class LSystemGUI:
     def __init__(self) -> None:
 
         self.screen = self.init_screen()
@@ -26,28 +25,30 @@ class LSystemGUI():
         # file_path = 'resources/plant_edge_rewriting_1.json'
         # file_path = 'resources/plant_edge_rewriting_2.json'
         # file_path = 'resources/plant_node_rewriting_1.json'
-        file_path = 'resources/plant_node_rewriting_2.json'
+        # file_path = 'resources/plant_node_rewriting_2.json'
 
         # file_path = 'resources/stochastic_plant_edge_rewriting.json'
 
         # file_path = 'resources/dragon_curve.json'
         # file_path = 'resources/hexagonal_gosper_curve.json'
         # file_path = 'resources/quadratic_koch_island.json'
-        # file_path = 'resources/sierpinsky_triangle.json'
+        file_path = "resources/sierpinsky_triangle.json"
         # file_path = 'resources/squared_squares.json'
 
         self.lsystem = LSystem.from_json(path_to_file=file_path)
 
-        self.renderer = LSystemRenderer(self.screen,
-                                        self.lsystem.config,
-                                        self.lsystem.instruction_mapping)
+        self.renderer = LSystemRenderer(
+            self.screen, self.lsystem.config, self.lsystem.instruction_mapping
+        )
 
         self.display_word(self.lsystem.word)
 
-    def init_screen(self,
-                    window_size: Tuple[int, int] = DEFAULT_WINDOW_SIZE,
-                    line_color: Tuple[int, int, int] = DEFAULT_LINE_COLOR,
-                    background_color: Tuple[int, int, int] = DEFAULT_BACKGROUND_COLOR) -> turtle.TurtleScreen:
+    def init_screen(
+        self,
+        window_size: Tuple[int, int] = DEFAULT_WINDOW_SIZE,
+        line_color: Tuple[int, int, int] = DEFAULT_LINE_COLOR,
+        background_color: Tuple[int, int, int] = DEFAULT_BACKGROUND_COLOR,
+    ) -> turtle.TurtleScreen:
 
         turtle.hideturtle()
         turtle.degrees(360)
@@ -56,7 +57,7 @@ class LSystemGUI():
         turtle.tracer(2, 100)
 
         screen = turtle.Screen()
-        screen.title('L-System')
+        screen.title("L-System")
         # screen.setup(*window_size)
         screen.colormode(255)
         screen.bgcolor(background_color)
@@ -69,28 +70,29 @@ class LSystemGUI():
 
     def display_word(self, word: Word = None) -> None:
 
-        displayed_word = word if word is not None else self.lsystem.next_derivation_gen(
-            self.lsystem.word)
+        displayed_word = (
+            word
+            if word is not None
+            else self.lsystem.next_derivation_gen(self.lsystem.word)
+        )
 
         self.screen.onscreenclick(None)
         self.renderer.draw(displayed_word)
         self.screen.onscreenclick(self._on_click)
 
         if word is not None:
-            print(f'{word}\n')
+            print(f"{word}\n")
         else:
-            print(f'{self.lsystem.word}\n')
+            print(f"{self.lsystem.word}\n")
 
         turtle.done()
 
 
 def main():
-
     window_size = (800, 800)
-
     gui = LSystemGUI()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     main()

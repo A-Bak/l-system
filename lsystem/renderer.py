@@ -55,9 +55,8 @@ class BaseRenderer:
     def _interpret_instruction(self, symbol: Symbol) -> Callable[[None], None]:
         try:
             return self.instruction_map[symbol]
-        except KeyError:
-            raise ValueError(
-                f'Invalid instruction mapping for symbol "{symbol}", not recognized.')
+        except KeyError as e:
+            raise ValueError(f'Invalid instruction mapping for symbol "{symbol}", not recognized.') from e
 
     def _nop(self) -> None:
         pass

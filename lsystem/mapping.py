@@ -5,11 +5,10 @@ from lsystem.model.symbol import Symbol
 from lsystem.common import Instruction
 
 
-__all__ = ['LSystemMapping']
+__all__ = ["LSystemMapping"]
 
 
 class LSystemMapping(dict):
-
     def __init__(self, *arg, **kw) -> None:
         super(LSystemMapping, self).__init__(*arg, **kw)
 
@@ -18,6 +17,7 @@ class LSystemMapping(dict):
 
     @classmethod
     def from_json(cls, str_dict: Mapping[str, str]) -> LSystemMapping:
-        instruction_mapping = {Symbol(key): Instruction.from_str(value)
-                               for key, value in str_dict.items()}
+        instruction_mapping = {
+            Symbol(key): Instruction.from_str(value) for key, value in str_dict.items()
+        }
         return LSystemMapping(instruction_mapping)

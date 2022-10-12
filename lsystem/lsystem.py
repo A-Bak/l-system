@@ -15,12 +15,16 @@ from lsystem.model.word import Word
 from lsystem.model.rule import Rule
 
 
-__all__ = ['LSystem', 'LSystemJSONEncoder', 'LSystemJSONDecoder']
+__all__ = ["LSystem", "LSystemJSONEncoder", "LSystemJSONDecoder"]
 
 
 class LSystem:
-
-    def __init__(self, grammar: Grammar, instruction_mapping: LSystemMapping, config: LSystemConfig) -> None:
+    def __init__(
+        self,
+        grammar: Grammar,
+        instruction_mapping: LSystemMapping,
+        config: LSystemConfig,
+    ) -> None:
         self.grammar = grammar
         self.instruction_mapping = instruction_mapping
         self.config = config
@@ -49,7 +53,7 @@ class LSystem:
         json_string = json.dumps(self, cls=LSystemJSONEncoder)
 
         if path_to_file is not None:
-            with open(path_to_file, 'w') as f:
+            with open(path_to_file, "w") as f:
                 f.write(json_string)
 
         return json_string
@@ -61,59 +65,53 @@ class LSystem:
             return json.loads(s, cls=LSystemJSONDecoder)
 
         elif path_to_file is not None:
-            with open(path_to_file, 'r') as f:
+            with open(path_to_file, "r") as f:
                 return json.load(f, cls=LSystemJSONDecoder)
 
         else:
-            raise ValueError('''Failed to load LSystem from JSON,
+            raise ValueError(
+                """Failed to load LSystem from JSON,
                              no JSON string or FilePath to JSON file
-                             were passed to LSystem.from_json().''')
+                             were passed to LSystem.from_json()."""
+            )
 
 
 class LSystemJSONEncoder(json.JSONEncoder):
-
     def default(self, o: LSystem) -> Any:
 
         if not isinstance(o, LSystem):
-            raise TypeError(f'Invalid type {type(o)} for LSystemJSONEncoder.')
+            raise TypeError(f"Invalid type {type(o)} for LSystemJSONEncoder.")
 
         nt_list = [str(symbol) for symbol in o.grammar.alphabet.nonterminals]
         t_list = [str(symbol) for symbol in o.grammar.alphabet.terminals]
-        rule_list = [[str(r.left_side), str(r.right_side)]
-                     for r in o.grammar.ruleset]
+        rule_list = [[str(r.left_side), str(r.right_side)] for r in o.grammar.ruleset]
         axiom = str(o.grammar.axiom)
 
-        lsystem_dict = {
-            'grammar': {
-                'nonterminals': nt_list,
-                'terminals': t_list,
-                'rules': rule_list,
-                'axiom': axiom
+        return {
+            "grammar": {
+                "nonterminals": nt_list,
+                "terminals": t_list,
+                "rules": rule_list,
+                "axiom": axiom,
             },
-            'mapping': o.instruction_mapping.to_json(),
-            'config': o.config.to_json()
+            "mapping": o.instruction_mapping.to_json(),
+            "config": o.config.to_json(),
         }
-
-        return lsystem_dict
 
 
 class LSystemJSONDecoder(json.JSONDecoder):
-
     def decode(self, s: str) -> LSystem:
 
         json_dict = json.loads(s)
 
-        nonterminals = [Symbol(x)
-                        for x in json_dict['grammar']['nonterminals']]
-        terminals = [Symbol(x)
-                     for x in json_dict['grammar']['terminals']]
-        rules = [Rule(Symbol(l), Word(r))
-                 for l, r in json_dict['grammar']['rules']]
-        axiom = Word(json_dict['grammar']['axiom'])
+        nonterminals = [Symbol(x) for x in json_dict["grammar"]["nonterminals"]]
+        terminals = [Symbol(x) for x in json_dict["grammar"]["terminals"]]
+        rules = [Rule(Symbol(l), Word(r)) for l, r in json_dict["grammar"]["rules"]]
+        axiom = Word(json_dict["grammar"]["axiom"])
 
         grammar = Grammar(nonterminals, terminals, rules, axiom)
 
-        instruction_mapping = LSystemMapping.from_json(json_dict['mapping'])
-        config = LSystemConfig(json_dict['config'])
+        instruction_mapping = LSystemMapping.from_json(json_dict["mapping"])
+        config = LSystemConfig(json_dict["config"])
 
         return LSystem(grammar, instruction_mapping, config)
