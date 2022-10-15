@@ -1,0 +1,34 @@
+_target_: lsystem.config.LSystemConfig
+name: "Stochastic Plant Edge Rewriting L-System"
+
+grammar:
+  _target_: lsystem.model.grammar.Grammar.from_dict
+  nonterminals: [F]
+  terminals: [+, -]
+  rules: [
+    [F, 'F[+F]F[-F]F'],
+    [F, 'F[+F]F'],
+    [F, 'F[-F]F'],
+  ]
+  axiom: F
+
+renderer_config:
+  line_segment_length: 300
+  line_segment_length_reduction: 0.49
+  angle_offset: 25
+
+  instruction_mapping:
+    _target_: lsystem.mapping.InstructionMapping.from_dict
+    map: {
+      'F': FORWARD,
+      '+': RIGHT,
+      '-': LEFT,
+      "[": SAVE,
+      "]": LOAD,
+    }
+
+  starting_state:
+    _target_: lsystem.renderer.RendererState
+    x: 0
+    y: -400
+    angle: 90

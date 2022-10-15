@@ -1,0 +1,34 @@
+_target_: lsystem.config.LSystemConfig
+name: "Plant Node Rewriting 1 L-System"
+
+grammar:
+  _target_: lsystem.model.grammar.Grammar.from_dict
+  nonterminals: [F, X]
+  terminals: [+, -]
+  rules: [
+    [X, 'F[+X]F[-X]+X'],
+    [F, 'FF'],
+  ]
+  axiom: X
+
+renderer_config:
+  line_segment_length: 200
+  line_segment_length_reduction: 0.55
+  angle_offset: 20
+
+  instruction_mapping:
+    _target_: lsystem.mapping.InstructionMapping.from_dict
+    map: {
+      'F': FORWARD,
+      'X': FORWARD,
+      '+': RIGHT,
+      '-': LEFT,
+      '[': SAVE,
+      ']': LOAD,
+    }
+    
+  starting_state:
+    _target_: lsystem.renderer.RendererState
+    x: 0
+    y: -400
+    angle: 90

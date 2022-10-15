@@ -1,0 +1,35 @@
+_target_: lsystem.config.LSystemConfig
+name: "Dragon Curve L-System"
+
+grammar:
+  _target_: lsystem.model.grammar.Grammar.from_dict
+  nonterminals: [F, G]
+  terminals: [+, -]
+  rules: [
+    [F, F+G],
+    [G, F-G]
+  ]
+  axiom: F
+
+renderer_config:
+  line_segment_length: 50
+  line_segment_length_reduction: 0.80
+  angle_offset: 90
+
+  instruction_mapping:
+    _target_: lsystem.mapping.InstructionMapping.from_dict
+    map: {
+      'F': FORWARD,
+      'G': FORWARD,
+      '+': RIGHT,
+      '-': LEFT,
+      '[': SAVE,
+      ']': LOAD,
+    }
+
+  starting_state:
+    _target_: lsystem.renderer.RendererState
+    x: 0
+    y: 0
+    angle: 0
+

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from lib2to3.pgen2 import grammar
 from typing import TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
@@ -6,48 +7,49 @@ if TYPE_CHECKING:
 
 import turtle
 
-from lsystem import LSystemRenderer, LSystem
+import hydra
+import hydra.utils
+from omegaconf import DictConfig
+from lsystem.config import LSystemConfig, RendererConfig, GUIWindowConfig
+
+from lsystem.model.grammar import Grammar
+from lsystem.derivator import GrammarDerivator
+from lsystem.renderer import TurtleRenderer
 
 
 __all__ = ["LSystemGUI"]
 
 
-DEFAULT_WINDOW_SIZE = (800, 800)
-DEFAULT_LINE_COLOR = (0, 0, 0)
-DEFAULT_BACKGROUND_COLOR = (255, 255, 255)
+HYDRA_CONFIG_PATH = "../../conf"
 
 
 class LSystemGUI:
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        title: str,
+        gui_config: GUIWindowConfig,
+        derivator: GrammarDerivator,
+        renderer: TurtleRenderer,
+    ) -> None:
 
-        self.screen = self.init_screen()
-
-        # file_path = 'resources/plant_edge_rewriting_1.json'
-        # file_path = 'resources/plant_edge_rewriting_2.json'
-        # file_path = 'resources/plant_node_rewriting_1.json'
-        # file_path = 'resources/plant_node_rewriting_2.json'
-
-        # file_path = 'resources/stochastic_plant_edge_rewriting.json'
-
-        # file_path = 'resources/dragon_curve.json'
-        # file_path = 'resources/hexagonal_gosper_curve.json'
-        # file_path = 'resources/quadratic_koch_island.json'
-        file_path = "resources/sierpinsky_triangle.json"
-        # file_path = 'resources/squared_squares.json'
-
-        self.lsystem = LSystem.from_json(path_to_file=file_path)
-
-        self.renderer = LSystemRenderer(
-            self.screen, self.lsystem.config, self.lsystem.instruction_mapping
+        self.screen = self._create_turtle_screen(
+            title,
+            gui_config.window_size,
+            gui_config.line_color,
+            gui_config.background_color,
         )
 
-        self.display_word(self.lsystem.word)
+        self.derivator = derivator
+        self.renderer = renderer
 
-    def init_screen(
+        self.display_word(self.derivator.word)
+
+    def _create_turtle_screen(
         self,
-        window_size: Tuple[int, int] = DEFAULT_WINDOW_SIZE,
-        line_color: Tuple[int, int, int] = DEFAULT_LINE_COLOR,
-        background_color: Tuple[int, int, int] = DEFAULT_BACKGROUND_COLOR,
+        title: str,
+        window_size: Tuple[int, int],
+        line_color: Tuple[int, int, int],
+        background_color: Tuple[int, int, int],
     ) -> turtle.TurtleScreen:
 
         turtle.hideturtle()
@@ -57,8 +59,8 @@ class LSystemGUI:
         turtle.tracer(2, 100)
 
         screen = turtle.Screen()
-        screen.title("L-System")
-        # screen.setup(*window_size)
+        screen.title(title)
+        screen.setup(*window_size)
         screen.colormode(255)
         screen.bgcolor(background_color)
         screen.onscreenclick(self._on_click)
@@ -73,24 +75,36 @@ class LSystemGUI:
         displayed_word = (
             word
             if word is not None
-            else self.lsystem.next_derivation_gen(self.lsystem.word)
+            else self.derivator.next_derivation_gen(self.derivator.word)
         )
 
         self.screen.onscreenclick(None)
-        self.renderer.draw(displayed_word)
+        self.renderer.draw(element=displayed_word, screen=self.screen)
         self.screen.onscreenclick(self._on_click)
 
         if word is not None:
             print(f"{word}\n")
         else:
-            print(f"{self.lsystem.word}\n")
+            print(f"{self.derivator.word}\n")
 
         turtle.done()
 
 
-def main():
-    window_size = (800, 800)
-    gui = LSystemGUI()
+@hydra.main(version_base=None, config_path=HYDRA_CONFIG_PATH, config_name="config")
+def main(config: DictConfig):
+
+    lsystem_cfg: LSystemConfig = hydra.utils.instantiate(config["lsystem"])
+    gui_cfg = config["app"]
+
+    derivator = GrammarDerivator(lsystem_cfg.grammar)
+    renderer = TurtleRenderer(lsystem_cfg.renderer_config)
+
+    gui = LSystemGUI(
+        title=lsystem_cfg.name,
+        gui_config=gui_cfg,
+        derivator=derivator,
+        renderer=renderer,
+    )
 
 
 if __name__ == "__main__":

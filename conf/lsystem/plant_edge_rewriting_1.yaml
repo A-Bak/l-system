@@ -1,0 +1,32 @@
+_target_: lsystem.config.LSystemConfig
+name: "Plant Edge Rewriting 1 L-System"
+
+grammar:
+  _target_: lsystem.model.grammar.Grammar.from_dict
+  nonterminals: [F]
+  terminals: [+, -]
+  rules: [
+    [F, 'F[+F]F[-F]F']
+  ]
+  axiom: F
+
+renderer_config:
+  line_segment_length: 200
+  line_segment_length_reduction: 0.40
+  angle_offset: 25
+
+  instruction_mapping:
+    _target_: lsystem.mapping.InstructionMapping.from_dict
+    map: {
+      'F': FORWARD,
+      '+': RIGHT,
+      '-': LEFT,
+      '[': SAVE,
+      ']': LOAD,
+    }
+
+  starting_state:
+    _target_: lsystem.renderer.RendererState
+    x: 0
+    y: -400
+    angle: 90

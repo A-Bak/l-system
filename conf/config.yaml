@@ -1,0 +1,3 @@
+defaults:
+  - app: gui
+  - lsystem: dragon_curve

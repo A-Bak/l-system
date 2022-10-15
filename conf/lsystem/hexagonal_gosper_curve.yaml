@@ -1,0 +1,32 @@
+_target_: lsystem.config.LSystemConfig
+name: "Hexagonal Gosper Curve L-System"
+
+grammar:
+  _target_: lsystem.model.grammar.Grammar.from_dict
+  nonterminals: [L, R]
+  terminals: [+, -]
+  rules: [
+    [L, L+R++R-L--LL-R+],
+    [R, -L+RR++R+L--L-R]
+  ]
+  axiom: L
+
+renderer_config:
+  line_segment_length: 400
+  line_segment_length_reduction: 0.40
+  angle_offset: 60
+
+  instruction_mapping:
+    _target_: lsystem.mapping.InstructionMapping.from_dict
+    map: {
+      'L': FORWARD,
+      'R': FORWARD,
+      '+': RIGHT,
+      '-': LEFT,
+    }
+
+  starting_state:
+    _target_: lsystem.renderer.RendererState
+    x: -100
+    y: -200
+    angle: 180

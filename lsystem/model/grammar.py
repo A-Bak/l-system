@@ -1,11 +1,9 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, List, Union
+from typing import List, Union, Mapping
 
-if TYPE_CHECKING:
-    from lsystem.model.symbol import Symbol
-    from lsystem.model.word import Word
-    from lsystem.model.rule import Rule
-
+from lsystem.model.symbol import Symbol
+from lsystem.model.word import Word
+from lsystem.model.rule import Rule
 from lsystem.model.alphabet import Alphabet
 from lsystem.model.ruleset import Ruleset
 
@@ -45,3 +43,18 @@ class Grammar:
                 yield self.apply_rule(s)
             else:
                 yield s
+
+    @classmethod
+    def from_dict(
+        cls,
+        nonterminals: List[str],
+        terminals: List[str],
+        rules: List[List[str]],
+        axiom: str,
+    ) -> Grammar:
+        return Grammar(
+            [Symbol(x) for x in nonterminals],
+            [Symbol(x) for x in terminals],
+            [Rule(Symbol(l), Word(r)) for l, r in rules],
+            Word(axiom),
+        )
