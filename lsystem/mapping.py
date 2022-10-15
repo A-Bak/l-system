@@ -1,26 +1,42 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any, Mapping
+from typing import Mapping
+
+from enum import Enum
 
 from lsystem.model.symbol import Symbol
-from lsystem.common import Instruction
 
 
-__all__ = ['LSystemMapping']
+__all__ = ["InstructionMapping", "InstructionEnum"]
 
 
-class LSystemMapping(dict):
+class InstructionEnum(Enum):
+    nop = "NOP"
+    forward = "FORWARD"
+    turn_left = "LEFT"
+    turn_right = "RIGHT"
+    save_state = "SAVE"
+    load_state = "LOAD"
 
-    # def __init__(self, instruction_mapping: Mapping[Symbol, Instruction]) -> None:
-    #     self.mapping = instruction_mapping
-
-    def __init__(self, *arg, **kw) -> None:
-        super(LSystemMapping, self).__init__(*arg, **kw)
-
-    def to_json(self) -> Mapping[str, str]:
-        return {str(key): str(value) for key, value in self.__dict__.items()}
+    def __str__(self) -> str:
+        return self.value
 
     @classmethod
-    def from_json(cls, str_dict: Mapping[str, str]) -> LSystemMapping:
-        instruction_mapping = {Symbol(key): Instruction.from_str(value)
-                               for key, value in str_dict.items()}
-        return LSystemMapping(instruction_mapping)
+    def from_str(cls, s: str) -> InstructionEnum:
+
+        for value in cls:
+            if s == str(value):
+                return value
+
+        raise ValueError(f"String {s} is not a valid value for Enum type Instruction.")
+
+
+class InstructionMapping(dict):
+    def __init__(self, *arg, **kw) -> None:
+        super(InstructionMapping, self).__init__(*arg, **kw)
+
+    @classmethod
+    def from_dict(cls, map: Mapping[str, str]) -> InstructionMapping:
+        instruction_mapping = {
+            Symbol(key): InstructionEnum.from_str(value) for key, value in map.items()
+        }
+        return InstructionMapping(instruction_mapping)

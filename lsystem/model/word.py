@@ -25,15 +25,15 @@ class Word():
         return all(map(lambda x: x in alphabet, self.symbols))
 
     def __repr__(self) -> str:
-        return f'<{self.__module__}.Word, {hex(id(self))}>'
+        return f'<{self.__module__}.Word, "{"".join(self.symbols)}", {hex(id(self))}>'
 
     def __str__(self) -> str:
         return ''.join(map(str, self.symbols))
 
     def __eq__(self, __x: object) -> bool:
-        if (not isinstance(__x, self.__class__)
-                or not len(__x.symbols) == len(self.symbols)):
-            return False
+        if not isinstance(__x, self.__class__) \
+           or not len(__x.symbols) == len(self.symbols):
+                return False
 
         return all(map(lambda x: x[0] == x[1], zip(__x.symbols, self.symbols)))
 
@@ -44,8 +44,7 @@ class Word():
         return key in self.symbols
 
     def __iter__(self) -> Symbol:
-        for s in self.symbols:
-            yield s
+        yield from self.symbols
 
     def append(self, other: Union[symbol.Symbol, Word]) -> None:
         if isinstance(other, symbol.Symbol):

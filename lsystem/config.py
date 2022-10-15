@@ -1,46 +1,55 @@
 from __future__ import annotations
-from typing import Mapping, Tuple, overload
+from typing import Tuple, List, TypeAlias
 
-from lsystem.state import LSystemState
+from dataclasses import dataclass, field
+
+from lsystem.model.rule import Rule
+from lsystem.model.symbol import Symbol
+from lsystem.model.grammar import Grammar
+
+from lsystem.mapping import InstructionMapping
 
 
-__all__ = ['LSystemConfig']
+@dataclass
+class GrammarConfig:
+    nonterminals: List[Symbol]
+    terminals: List[Symbol]
+    rules: List[Rule]
+    axiom: Symbol
 
 
+@dataclass
+class StartingState:
+    x: int
+    y: int
+    angle: int
+
+
+@dataclass
+class RendererConfig:
+    line_segment_length: Pixels
+    line_segment_length_reduction: Percentage
+    angle_offset: Degrees
+
+    instruction_mapping: InstructionMapping = field(default_factory=InstructionMapping.from_dict)
+
+    starting_state: StartingState = field(default_factory=StartingState)
+
+
+@dataclass
 class LSystemConfig:
+    name: str
+    grammar: Grammar = field(default_factory=Grammar.from_dict)
+    renderer_config: RendererConfig = field(default_factory=RendererConfig)
 
-    @overload
-    def __init__(self, angle_offset: int, segment_length: int, length_reduction: float, starting_state: LSystemState) -> None:
-        ...
 
-    @overload
-    def __init__(self, dict: Mapping[str, int]) -> None:
-        ...
+Pixels: TypeAlias = int
+Percentage: TypeAlias = float
+Degrees: TypeAlias = int
 
-    def __init__(self, *args) -> None:
 
-        if len(args) == 1 and isinstance(args[0], dict):
-            self.angle_offset = args[0]['angle_offset']
-            self.segment_length = args[0]['segment_length']
-            self.length_reduction = args[0]['length_reduction']
-            self.starting_state = LSystemState(args[0]['starting_state'])
-
-        elif len(args) == 3 and isinstance(args[1], int) and isinstance(args[2], int) and isinstance(args[3], LSystemState):
-            self.angle_offset = args[0]
-            self.segment_length = args[1]
-            self.length_reduction = args[2]
-            self.starting_state = args[3]
-
-        else:
-            raise NotImplementedError(
-                f'InvalidArguments: LSystemConfig constructor does not support given arguments "{list(map(type, args))}".')
-
-    def to_json(self) -> Mapping(str, int):
-        return {'angle_offset': self.angle_offset,
-                'segment_length': self.segment_length,
-                'length_reduction': self.length_reduction,
-                'starting_state': self.starting_state.to_json()}
-
-    @classmethod
-    def from_json(cls, config_dict: Mapping[str, int]):
-        return LSystemConfig(config_dict)
+@dataclass
+class GUIWindowConfig:
+    window_size: Tuple[int, int] = field(default_factory=tuple)
+    line_color: Tuple[int, int, int] = field(default_factory=tuple)
+    background_color: Tuple[int, int, int] = field(default_factory=tuple)

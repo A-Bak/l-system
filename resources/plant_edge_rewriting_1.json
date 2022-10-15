@@ -1,0 +1,35 @@
+{
+    "grammar": {
+        "nonterminals": [
+            "F"
+        ],
+        "terminals": [
+            "+",
+            "-"
+        ],
+        "rules": [
+            [
+                "F",
+                "F[+F]F[-F]F"
+            ]
+        ],
+        "axiom": "F"
+    },
+    "mapping": {
+        "F": "FORWARD",
+        "+": "RIGHT",
+        "-": "LEFT",
+        "[": "SAVE",
+        "]": "LOAD"
+    },
+    "config": {
+        "segment_length": 200,
+        "length_reduction": 0.40,
+        "angle_offset": 25,
+        "starting_state": {
+            "x": 0,
+            "y": -400,
+            "angle": 90
+        }
+    }
+}

@@ -1,104 +1,112 @@
-from typing import Tuple
+from __future__ import annotations
+from lib2to3.pgen2 import grammar
+from typing import TYPE_CHECKING, Tuple
+
+if TYPE_CHECKING:
+    from lsystem.model.word import Word
 
 import turtle
 
-from lsystem import LSystemRenderer, LSystem
+import hydra
+import hydra.utils
+from omegaconf import DictConfig
+from lsystem.config import LSystemConfig, RendererConfig, GUIWindowConfig
+
+from lsystem.model.grammar import Grammar
+from lsystem.derivator import GrammarDerivator
+from lsystem.renderer import TurtleRenderer
 
 
-__all__ = ['LSystemGUI']
+__all__ = ["LSystemGUI"]
 
 
-DEFAULT_WINDOW_SIZE = (800, 800)
-DEFAULT_LINE_COLOR = (0, 0, 0)
-DEFAULT_BACKGROUND_COLOR = (255, 255, 255)
+HYDRA_CONFIG_PATH = "../../conf"
 
 
-class LSystemGUI():
+class LSystemGUI:
+    def __init__(
+        self,
+        title: str,
+        gui_config: GUIWindowConfig,
+        derivator: GrammarDerivator,
+        renderer: TurtleRenderer,
+    ) -> None:
 
-    def __init__(self, lsystem: LSystem, renderer: LSystemRenderer,
-                 window_size: Tuple[int, int] = DEFAULT_WINDOW_SIZE,
-                 line_color: Tuple[int, int, int] = DEFAULT_LINE_COLOR,
-                 background_color: Tuple[int, int, int] = DEFAULT_BACKGROUND_COLOR) -> None:
+        self.screen = self._create_turtle_screen(
+            title,
+            gui_config.window_size,
+            gui_config.line_color,
+            gui_config.background_color,
+        )
 
-        self.lsystem = lsystem
+        self.derivator = derivator
         self.renderer = renderer
 
-        self.start_state = renderer.current_state
+        self.display_word(self.derivator.word)
+
+    def _create_turtle_screen(
+        self,
+        title: str,
+        window_size: Tuple[int, int],
+        line_color: Tuple[int, int, int],
+        background_color: Tuple[int, int, int],
+    ) -> turtle.TurtleScreen:
 
         turtle.hideturtle()
         turtle.degrees(360)
         turtle.colormode(255)
         turtle.pencolor(line_color)
-        turtle.tracer(5, 25)
+        turtle.tracer(2, 100)
 
-        self.window = turtle.Screen()
-        self.window.title('L-System')
-        # self.window.setup(*window_size, *self.start_position)
-        self.window.colormode(255)
-        self.window.bgcolor(background_color)
-        self.window.onscreenclick(self._on_click)
+        screen = turtle.Screen()
+        screen.title(title)
+        screen.setup(*window_size)
+        screen.colormode(255)
+        screen.bgcolor(background_color)
+        screen.onscreenclick(self._on_click)
 
-        self.turtle = turtle.Turtle()
-        self.turtle.hideturtle()
-        self.turtle.speed(0)
-        self._reset_turtle()
+        return screen
 
-        self.display_word(lsystem.word)
+    def _on_click(self, pos_x: float, pos_y: float) -> None:
+        self.display_word()
+
+    def display_word(self, word: Word = None) -> None:
+
+        displayed_word = (
+            word
+            if word is not None
+            else self.derivator.next_derivation_gen(self.derivator.word)
+        )
+
+        self.screen.onscreenclick(None)
+        self.renderer.draw(element=displayed_word, screen=self.screen)
+        self.screen.onscreenclick(self._on_click)
+
+        if word is not None:
+            print(f"{word}\n")
+        else:
+            print(f"{self.derivator.word}\n")
 
         turtle.done()
 
-    def display_word(self, word) -> None:
-        self.window.onscreenclick(None)
-        self.turtle.clear()
-        self._reset_turtle()
 
-        self.renderer.draw(word, self.turtle)
+@hydra.main(version_base=None, config_path=HYDRA_CONFIG_PATH, config_name="config")
+def main(config: DictConfig):
 
-        self.window.onscreenclick(self._on_click)
+    lsystem_cfg: LSystemConfig = hydra.utils.instantiate(config["lsystem"])
+    gui_cfg = config["app"]
 
-    def _on_click(self, pos_x: float, pos_y: float) -> None:
-        self.next_step()
+    derivator = GrammarDerivator(lsystem_cfg.grammar)
+    renderer = TurtleRenderer(lsystem_cfg.renderer_config)
 
-    def next_step(self) -> None:
-        self.window.onscreenclick(None)
-        self.turtle.clear()
-        self._reset_turtle()
-
-        for derivation in self.lsystem.next_derivation(self.lsystem.word):
-            self.renderer.draw(derivation, self.turtle)
-
-        self.renderer.reduce_length()
-        print(self.lsystem.word)
-
-        self.window.onscreenclick(self._on_click)
-
-    def _reset_turtle(self):
-        self.turtle.penup()
-
-        self.turtle.speed(0)
-        self.turtle.setx(self.start_state.x)
-        self.turtle.sety(self.start_state.y)
-        self.turtle.seth(self.start_state.angle)
-
-        self.turtle.pendown()
+    gui = LSystemGUI(
+        title=lsystem_cfg.name,
+        gui_config=gui_cfg,
+        derivator=derivator,
+        renderer=renderer,
+    )
 
 
-def load_lsystem(self):
-    pass
-
-
-def main():
-
-    window_size = (800, 800)
-
-    lsystem = LSystem.from_json(
-        path_to_file='resources/dragon_curve.json')
-
-    renderer = LSystemRenderer(lsystem)
-
-    gui = LSystemGUI(lsystem, renderer)
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     main()

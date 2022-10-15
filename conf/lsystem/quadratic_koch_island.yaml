@@ -1,0 +1,30 @@
+_target_: lsystem.config.LSystemConfig
+name: "Quadratic Koch Island L-System"
+
+grammar:
+  _target_: lsystem.model.grammar.Grammar.from_dict
+  nonterminals: [F]
+  terminals: [+, -]
+  rules: [
+    [F, F-F+F+FF-F-F+F]
+  ]
+  axiom: F-F-F-F
+
+renderer_config:
+  line_segment_length: 400
+  line_segment_length_reduction: 0.25
+  angle_offset: 90
+
+  instruction_mapping:
+    _target_: lsystem.mapping.InstructionMapping.from_dict
+    map: {
+      'F': FORWARD,
+      '+': RIGHT,
+      '-': LEFT,
+    }
+    
+  starting_state:
+    _target_: lsystem.renderer.RendererState
+    x: -200
+    y: -200
+    angle: 0

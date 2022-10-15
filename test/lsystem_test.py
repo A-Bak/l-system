@@ -1,9 +1,9 @@
 import unittest
 
 import os
-import json
 
-from lsystem import LSystem, LSystemJSONEncoder
+from lsystem import LSystem
+from lsystem.model.word import Word
 
 
 class TestModelSymbol(unittest.TestCase):
@@ -13,13 +13,42 @@ class TestModelSymbol(unittest.TestCase):
         pass
 
     def test_constructor(self):
+        """ Test LSystem constructor. """
 
-        # ls = LSystem()
-        pass
+        self.assertIsNotNone(LSystem.from_json(
+            path_to_file='test/resources/lsystem_1.json'))
+
+    def test_derivation(self):
+        """ Test word derivations using LSystem's grammar. """
+
+        lsystem = LSystem.from_json(
+            path_to_file='test/resources/lsystem_1.json')
+
+        self.assertEqual(lsystem.word, lsystem.grammar.axiom)
+        self.assertEqual(lsystem.word, Word('A'))
+
+        lsystem.next_derivation(lsystem.word)
+        self.assertEqual(lsystem.word, Word('B+'))
+
+        lsystem.next_derivation(lsystem.word)
+        self.assertEqual(lsystem.word, Word('C-+'))
+
+        lsystem.next_derivation(lsystem.word)
+        self.assertEqual(lsystem.word, Word('D--+'))
+
+        lsystem.next_derivation(lsystem.word)
+        self.assertEqual(lsystem.word, Word('A+--+'))
+
+    def test_derivation_gen(self):
+        """ Test generator for word derivations using LSystem's grammar. """
+
+        lsystem = LSystem.from_json(
+            path_to_file='test/resources/lsystem_1.json')
 
     def test_json(self):
+        """ Test serializing LSystem to and from JSON. """
 
-        file_path = 'resources/dragon_curve.json'
+        file_path = 'test/resources/lsystem_1.json'
         self.assertTrue(os.path.exists(file_path))
 
         with open(file_path, 'r') as f:
@@ -38,7 +67,7 @@ class TestModelSymbol(unittest.TestCase):
 
         self.assertIsNotNone(ls1.to_json())
 
-        ls1.to_json('resources/test.json')
+        ls1.to_json('test/resources/test.json')
 
 
 if __name__ == "__main__":

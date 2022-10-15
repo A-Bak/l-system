@@ -1,82 +1,158 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, Union
+from types import GeneratorType
 
+from dataclasses import dataclass
 from functools import singledispatchmethod
-from turtle import Turtle
 
-from lsystem.common import Instruction
-from lsystem.lsystem import LSystem
+import turtle
+
+from lsystem.config import RendererConfig
+from lsystem.mapping import InstructionEnum
 
 from lsystem.model.symbol import Symbol
 from lsystem.model.word import Word
 
 
-__all__ = ['LSystemRenderer']
+__all__ = ["TurtleRenderer", "RendererState"]
 
 
-class LSystemRenderer():
+# TODO: Add incremental changes - length/angle changes per generation
+#                               - length/angle changes per branch
+#                               - change thickness and color?
 
-    def __init__(self, lsystem: LSystem) -> None:
-        self.angle_delta = lsystem.config.angle_offset
-        self.position_delta = lsystem.config.segment_length
-        self.length_reduction = lsystem.config.length_reduction
 
-        self.current_state = lsystem.config.starting_state
+@dataclass()
+class RendererState:
+    x: int
+    y: int
+    angle: int
+
+
+class BaseRenderer:
+    def __init__(
+        self,
+        config: RendererConfig,
+        turtle_obj: turtle.Turtle = None,
+    ) -> None:
+
+        self.position_delta = config.line_segment_length
+        self.angle_delta = config.angle_offset
+
         self.state_stack = []
 
         self.instruction_codes = {
-            Instruction.forward: self._move_forward,
-            Instruction.turn_right: self._turn_right,
-            Instruction.turn_left: self._turn_left,
-            Instruction.save_state: self._store_state,
-            Instruction.load_state: self._load_state,
+            InstructionEnum.nop: self._nop,
+            InstructionEnum.forward: self._move_forward,
+            InstructionEnum.turn_right: self._turn_right,
+            InstructionEnum.turn_left: self._turn_left,
+            InstructionEnum.save_state: self._store_state,
+            InstructionEnum.load_state: self._load_state,
         }
 
-        self.instruction_map = {symbol: self.instruction_codes[instruction_enum]
-                                for symbol, instruction_enum in lsystem.instruction_mapping.items()}
+        self.instruction_map = {
+            symbol: self.instruction_codes[instruction_enum]
+            for symbol, instruction_enum in config.instruction_mapping.items()
+        }
 
-    @singledispatchmethod
-    def draw(self, other, turtle_obj: Turtle):
-        raise NotImplementedError(
-            f'Not supported type {type(other)} for LSystemRenderer.draw().')
+        if turtle_obj is None:
+            self.turtle_obj = turtle.Turtle()
+            self.turtle_obj.hideturtle()
+        else:
+            self.turtle_obj = turtle_obj
 
-    @draw.register
-    def _(self, symbol: Symbol, turtle_obj: Turtle):
-        instruction = self.interpret_instruction(symbol)
-        instruction(turtle_obj)
-
-    @draw.register
-    def _(self, word: Word, turtle_obj: Turtle):
-        for symbol in word:
-            instruction = self.interpret_instruction(symbol)
-            instruction(turtle_obj)
-
-    def interpret_instruction(self, symbol: Symbol) -> Callable[[Turtle], None]:
+    def _interpret_instruction(self, symbol: Symbol) -> Callable[[None], None]:
         try:
             return self.instruction_map[symbol]
-        except KeyError:
+        except KeyError as e:
             raise ValueError(
-                f'Invalid instruction mapping for symbol "{symbol}", not recognized.')
+                f'Invalid instruction mapping for symbol "{symbol}", not recognized.'
+            ) from e
 
-    def _move_forward(self, turtle_obj: Turtle) -> None:
-        turtle_obj.forward(self.position_delta)
+    def _nop(self) -> None:
+        pass
 
-    def _turn_right(self, turtle_obj: Turtle) -> None:
-        turtle_obj.right(self.angle_delta)
+    def _move_forward(self) -> None:
+        self.turtle_obj.forward(self.position_delta)
 
-    def _turn_left(self, turtle_obj: Turtle) -> None:
-        turtle_obj.left(self.angle_delta)
+    def _turn_right(self) -> None:
+        self.turtle_obj.right(self.angle_delta)
 
-    def _store_state(self, turtle_obj: Turtle) -> None:
-        self.state_stack.append(self.current_state)
+    def _turn_left(self) -> None:
+        self.turtle_obj.left(self.angle_delta)
 
-    def _load_state(self, turtle_obj: Turtle) -> None:
-        self.current_state = self.state_stack.pop()
+    def _store_state(self) -> None:
+        self.state_stack.append(self.current_state())
 
-        turtle_obj.penup()
-        turtle_obj.setposition(self.current_state.x, self.current_state.y)
-        turtle_obj.setheading(self.current_state.angle)
-        turtle_obj.pendown()
+    def _load_state(self) -> None:
+        state = self.state_stack.pop()
 
-    def reduce_length(self) -> None:
+        self.turtle_obj.penup()
+        self.turtle_obj.setposition(state.x, state.y)
+        self.turtle_obj.setheading(state.angle)
+        self.turtle_obj.pendown()
+
+    def current_state(self) -> RendererState:
+        return RendererState(
+            self.turtle_obj.xcor(), self.turtle_obj.ycor(), self.turtle_obj.heading()
+        )
+
+
+class TurtleRenderer(BaseRenderer):
+    def __init__(
+        self,
+        config: RendererConfig,
+        turtle_obj: turtle.Turtle = None,
+    ) -> None:
+        super().__init__(config, turtle_obj)
+        self.length_reduction = config.line_segment_length_reduction
+        self.starting_state = config.starting_state
+
+    def clear_canvas(self) -> None:
+        self.turtle_obj.clear()
+        self.turtle_obj.penup()
+        self.turtle_obj.speed(0)
+        self.turtle_obj.setx(self.starting_state.x)
+        self.turtle_obj.sety(self.starting_state.y)
+        self.turtle_obj.seth(self.starting_state.angle)
+        self.turtle_obj.pendown()
+
+    def draw(
+        self,
+        element: Union[Symbol, Word, GeneratorType],
+        screen: turtle.TurtleScreen,
+    ) -> None:
+        self.clear_canvas()
+        self._draw_element(element)
+        screen.update()
+        self.incremental_changes()
+
+    @singledispatchmethod
+    def _draw_element(self, element) -> None:
+        raise NotImplementedError(
+            f"Not supported type {type(element)} for LSystemRenderer._draw_element()."
+        )
+
+    @_draw_element.register
+    def _(self, symbol: Symbol) -> None:
+        instruction = self._interpret_instruction(symbol)
+        instruction()
+
+    @_draw_element.register
+    def _(self, word: Word) -> None:
+        for symbol in word:
+            instruction = self._interpret_instruction(symbol)
+            instruction()
+
+    @_draw_element.register
+    def _(self, derivation_gen: GeneratorType) -> None:
+        for derivation in derivation_gen:
+            self._draw_element(derivation)
+
+    def incremental_changes(self) -> None:
+        n = int(turtle.tracer() * 2)
+        delay = int(turtle.delay() / 2)
+
+        turtle.tracer(n, delay)
+
         self.position_delta *= self.length_reduction

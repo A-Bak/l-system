@@ -1,0 +1,39 @@
+{
+    "grammar": {
+        "nonterminals": [
+            "L",
+            "R"
+        ],
+        "terminals": [
+            "+",
+            "-"
+        ],
+        "rules": [
+            [
+                "L",
+                "L+R++R-L--LL-R+"
+            ],
+            [
+                "R",
+                "-L+RR++R+L--L-R"
+            ]
+        ],
+        "axiom": "L"
+    },
+    "mapping": {
+        "L": "FORWARD",
+        "R": "FORWARD",
+        "+": "RIGHT",
+        "-": "LEFT"
+    },
+    "config": {
+        "segment_length": 400,
+        "length_reduction": 0.40,
+        "angle_offset": 60,
+        "starting_state": {
+            "x": -200,
+            "y": -200,
+            "angle": 180
+        }
+    }
+}
