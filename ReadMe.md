@@ -1,18 +1,54 @@
 # L-System
 
-
 An L-system or Lindenmayer system is a parallel rewriting system and a type of formal grammar. An L-system consists of an alphabet of symbols that can be used to make strings, a collection of production rules that expand each symbol into some larger string of symbols, an initial "axiom" string from which to begin construction, and a mechanism for translating the generated strings into geometric structures. L-systems were introduced and developed in 1968 by Aristid Lindenmayer, a Hungarian theoretical biologist and botanist at the University of Utrecht. Lindenmayer used L-systems to describe the behaviour of plant cells and to model the growth processes of plant development. L-systems have also been used to model the morphology of a variety of organisms and can be used to generate self-similar fractals.<sup>[1](https://en.wikipedia.org/wiki/L-system)</sup>
 
-## L-System Examples
+# Installation
+
+You can download and install the latest release using pip.
+```bash
+pip install LSystemRenderer
+```
+
+## Usage
+
+After installing the latest version you can run the script as follows:
+
+```bash
+lsystem-gui lsystem=LSYSTEM_NAME
+```
+Where `LSYSTEM_NAME` is the name of the L-System configuration file. There are several configuration files provided, but you can create your own custom L-System configuration as well.
+
+|  |Implemented L-Systems|
+|--|---------|
+|1.|[dragon_curve](https://en.wikipedia.org/wiki/Dragon_curve)|
+|2.|[hexagonal_gosper_curve](https://en.wikipedia.org/wiki/Gosper_curve)|
+|3.|[koch_snowflake](https://en.wikipedia.org/wiki/Koch_snowflake)|
+|4.|[koch_quadratic_island](https://en.wikipedia.org/wiki/Minkowski_sausage)|
+|5.|[plant_edge_rewriting_1]()|
+|6.|[plant_edge_rewriting_2]()|
+|7.|[plant_node_rewriting_1]()|
+|8.|[plant_node_rewriting_2]()|
+|9.|[sierpinsky_triangle](https://en.wikipedia.org/wiki/Sierpi%C5%84ski_triangle)|
+|10.|[squared_squares]()|
+|11.|[stochastic_plant_edge_rewriting]()|
 
 
+### Plant Edge Rewriting 1
+![Plant Edge Rewriting 1](./resources/plant_edge_rewriting_1.gif)
 
+### Plant Edge Rewriting 2
+![Plant Edge Rewriting 2](./resources/plant_edge_rewriting_2.gif)
 
+### Plant Node Rewriting 1
+![Plant Node Rewriting 1](./resources/plant_node_rewriting_1.gif)
+
+### Plant Node Rewriting 2
+![Plant Node Rewriting 2](./resources/plant_node_rewriting_2.gif)
+
+### Stochastic Plant Edge Rewriting
+![Stochastic Plant Edge Rewriting](./resources/stochastic_plant_edge_rewriting.gif)
 
 ## Configuration File Structure
-
-
-
 
 The main `config.yaml` file extends application and lsystem configuration files.
 This file contains the default configuration of the application when it is called
@@ -48,7 +84,6 @@ grammar:
   axiom: STARTING_AXIOM
 ```
 
-
 3. Renderer configuration for the L-System:
 
     - `line_segment_length` - starting length of the line segments
@@ -56,6 +91,7 @@ grammar:
     - `angle_offset` - angle by which the renderer turns to the left/right
 
     - `instruction_mapping` - dictionary mapping symbols $s \in N \cup T$ to their corresponding renderer instuctions from `InstructionEnum`:
+        - `NOP` - no operation
         - `FORWARD` - draw line segment of given length in the direction the renderer is facing
         - `LEFT` - turn left by a number of degrees
         - `RIGHT` - turn right by a number of degrees
