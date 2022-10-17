@@ -67,7 +67,6 @@ class LSystemGUI:
         self.renderer = renderer
 
         self.display_word(self.derivator.word)
-
         self.allow_actions()
 
     def _on_click(self, pos_x: float, pos_y: float) -> None:
@@ -82,7 +81,8 @@ class LSystemGUI:
 
     def allow_actions(self) -> None:
         self.screen.onscreenclick(self._on_click)
-        self.screen.onkeypress(self._on_click, key="space")
+        turtle.listen()
+        self.screen.onkeypress(self._on_key_press, key="space")
 
     def display_word(self, word: Word = None) -> None:
 
