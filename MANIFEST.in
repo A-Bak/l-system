@@ -1,8 +1,6 @@
 include .gitignore
 include LICENCE
-
-include *.py
 include *.md
 
-recursive-include conf *.yaml
-recursive-include conf *.py
+recursive-include conf *
+recursive-include lsystem *

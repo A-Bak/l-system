@@ -4,10 +4,13 @@ An L-system or Lindenmayer system is a parallel rewriting system and a type of f
 
 # Installation
 
-You can download and install the latest release using pip.
-```bash
-pip install LSystemRenderer
-```
+You can download and install the latest release as follows:
+
+1. Open a terminal
+2. Run `git clone https://github.com/A-Bak/l-system`
+3. Switch to the directory `cd l-system`
+4. Run `python setup.py install`
+5. Done
 
 ## Usage
 
@@ -31,6 +34,9 @@ Where `LSYSTEM_NAME` is the name of the L-System configuration file. There are s
 |9.|[sierpinsky_triangle](https://en.wikipedia.org/wiki/Sierpi%C5%84ski_triangle)|
 |10.|[squared_squares]()|
 |11.|[stochastic_plant_edge_rewriting]()|
+
+NOTE: if you want to create your own L-System configuration files add them to the
+`conf/lsystem` directory.
 
 
 ### Plant Edge Rewriting 1
