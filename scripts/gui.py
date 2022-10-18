@@ -18,7 +18,7 @@ from lsystem.renderer import TurtleRenderer
 __all__ = ["LSystemGUI"]
 
 
-HYDRA_CONFIG_PATH = "../../conf"
+HYDRA_CONFIG_PATH = "../conf"
 
 
 def create_turtle_screen(
@@ -122,5 +122,4 @@ def main(config: DictConfig):
 
 
 if __name__ == "__main__":
-
     main()
